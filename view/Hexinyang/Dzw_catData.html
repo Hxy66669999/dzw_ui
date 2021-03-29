@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<link rel="stylesheet" type="text/css" href="../../css/index.css" />
+	</head>
+
+	<body>
+		<div id="CatDataApp">
+			<el-row :gutter="20">
+				<el-col :span="6">
+					<!--<div class="grid-content bg-purple">
+						<h2>客户资料管理</h2></div>-->
+				</el-col>
+				<el-col :span="6" :offset="6">
+					<div class="grid-content bg-purple">&nbsp;</div>
+				</el-col>
+			</el-row>
+			<el-row>
+				<el-col :span="24">
+					<div class="grid-content bg-purple-dark">
+						<el-form :inline="true" class="demo-form-inline" style="width: 100%;">
+							<el-form-item label="车辆牌照：">
+								<el-input placeholder="请输入车辆牌照" v-model="vdfPlatenum"></el-input>
+							</el-form-item>
+							<el-form-item>
+								<el-button type="primary" icon="el-icon-search" @click="queryCatAll(1,pageSize)"></el-button>
+							</el-form-item>
+							<el-form-item>
+								<el-button type="success" @click=" ">添加车辆</el-button>
+							</el-form-item>
+							<el-form-item>
+								<el-button type="danger" @click=" ">删除</el-button>
+							</el-form-item>
+						</el-form>
+					</div>
+				</el-col>
+			</el-row>
+			<el-row>
+				<el-col :span="24">
+					<div class="grid-content bg-purple-dark">
+						<template>
+							<el-table @row-click="queryByNumCat" :highlight-current-row="true" v-loading="Catloading" :data="catDataLists.list" height="300" border style="width: 100%">
+								<!--<el-table-column type="selection" width="55">
+								</el-table-column>-->
+								<el-table-column prop="vehicledatainfo.vdfPlatenum" label="车辆牌照">
+								</el-table-column>
+								<el-table-column prop="catBernd" label="车辆牌照">
+								</el-table-column>
+								<el-table-column prop="catType" label="车辆类型">
+								</el-table-column>
+								<el-table-column prop="vehicledatainfo.vdfPlace" label="车辆产地">
+								</el-table-column>
+								<el-table-column prop="vehicledatainfo.vdfColor" label="车辆颜色">
+								</el-table-column>
+								<el-table-column prop="vehicledatainfo.vdfVin" label="车辆车架号">
+								</el-table-column>
+								<el-table-column prop="" label="操作">
+								</el-table-column>
+							</el-table>
+						</template>
+						<div class="block">
+							<el-pagination @size-change="handleSizeChangeCatData" @current-change="handleCurrentChangeCatData" :page-sizes="[2, 4, 6, 8]" :page-size="100" :current-page="catDataLists.pageNum" :page-size="catDataLists.pageSize" layout="sizes, prev, pager, next" :total="catDataLists.total">
+							</el-pagination>
+						</div>
+
+					</div>
+				</el-col>
+			</el-row>
+
+			<el-row>
+				<el-col :span="24">
+					<div class="grid-content bg-purple-dark">
+						<template>
+							<el-tabs v-model="activeNameCat" style="width: 100%;margin-top: 2%;">
+								<el-tab-pane label="客户资料" name="client1">
+									<template>
+										<el-table :data="clientDataByNumList" height="250" border style="width: 100%">
+											<el-table-column prop="cdfNumber" label="客户编号">
+											</el-table-column>
+											<el-table-column prop="cdfName" label="客户姓名">
+											</el-table-column>
+											<el-table-column prop="cdfPhone" label="客户电话">
+											</el-table-column>
+											<el-table-column prop="cdfSex" label="客户性别">
+												<template slot-scope="temp">
+													<span v-if="temp.row.cdfSex==1">男</span>
+													<span v-else-if="temp.row.cdfSex==0">女</span>
+												</template>
+											</el-table-column>
+											<el-table-column prop="cdfIsvip" label="客户类型">
+												<template slot-scope="temp">
+													<span v-if="temp.row.cdfIsvip==1">会员</span>
+													<span v-else-if="temp.row.cdfIsvip==0">普通</span>
+												</template>
+											</el-table-column>
+											<el-table-column prop="cdfAddress" label="客户地址">
+											</el-table-column>
+
+										</el-table>
+									</template>
+								</el-tab-pane>
+
+							</el-tabs>
+						</template>
+					</div>
+				</el-col>
+			</el-row>
+			<!--<el-dialog title="新增客户资料" :visible.sync="dialogVisible" width="50%" :before-close="handleClose">
+				<div id="clientDiv">
+
+				</div>
+			</el-dialog>
+
+			<el-dialog title="修改客户资料" :visible.sync="dialogVisibleUpdateClient" width="50%" :before-close="handleClose">
+				<div id="clientUpdateDiv">
+
+				</div>
+			</el-dialog>
+
+			<el-dialog title="新增客户车辆资料" :visible.sync="dialogVisibleAddCat" width="50%" :before-close="handleClose">
+				<div id="clientAddCatDiv">
+
+				</div>
+			</el-dialog>-->
+		</div>
+	</body>
+	<script type="text/javascript" src="../../js/jquery-1.12.4.js"></script>
+	<script type="text/javascript" src="../../js/vue.js"></script>
+	<script type="text/javascript" src="../../js/axios.min.js"></script>
+	<script type="text/javascript" src="../../js/axios_cfg.js"></script>
+	<script type="text/javascript" src="../../js/index.js"></script>
+	<script type="text/javascript">
+		var _catDataThis;
+		var catDataMv = new Vue({
+			el: "#CatDataApp",
+			data: {
+				//车牌
+				vdfPlatenum: "",
+				//客户车辆的数组
+				catDataLists: [],
+				Catloading: true,
+				pageSize: 2,
+
+				//客户资料数组
+				clientDataByNumList: [],
+
+				activeNameCat: "client1",
+
+				Catlists: [],
+			},
+			methods: {
+				//查询所有车辆
+				queryCatAll(pageNum, pageSize) {
+					axios({
+						url: "http://localhost:8080/api/Hxy/VehicledatainfoAction/queryCatAll",
+						method: "get",
+						params: {
+							vdfPlatenum: _catDataThis.vdfPlatenum,
+							pageNum: pageNum,
+							pageSize: pageSize,
+						}
+					}).then(function(result) {
+						console.info(result.data);
+						_catDataThis.catDataLists = result.data;
+					})
+				},
+				//根据车辆编号查询客户资料
+				queryByNumCat(row) {
+					axios({
+						url: "http://localhost:8080/api/Hxy/ClientdatainfoAction/queryByNum",
+						method: "get",
+						params: {
+							cdfNumber: row.vehicledatainfo.vdfCdfnum,
+						}
+					}).then(function(result) {
+						var arr = new Array();
+						arr.push(result.data);
+
+						_catDataThis.clientDataByNumList = arr;
+
+					})
+
+				},
+				handleSizeChangeCatData(val) {
+					_catDataThis.pageSize = val;
+					_catDataThis.queryCatAll(_catDataThis.catDataLists.pageNum, val);
+					//_catDataThis.catList = ""
+				},
+				handleCurrentChangeCatData(val) {
+					_catDataThis.queryCatAll(val, _catDataThis.pageSize);
+				},
+			},
+			mounted() {
+				_catDataThis = this;
+				setTimeout(function() {
+					_catDataThis.queryCatAll(1, 2);
+					_catDataThis.Catloading = false;
+				}, 2000)
+			}
+		})
+	</script>
+
+</html>

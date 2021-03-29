@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<link rel="stylesheet" href="../../css/index.css" />
+	</head>
+
+	<body>
+		<div id="modeltype2" style="margin-left: 750px;">
+			<el-form    label-width="100px" class="demo-ruleForm" style="width: 300px;">
+				<!--<el-form-item label="品牌id">
+					<el-input type="password"    v-model="brandid"   autocomplete="off"></el-input>
+				</el-form-item>-->
+				<el-form-item label="品牌名称" >
+					<el-input type="text"    v-model="brandname"   autocomplete="off"></el-input>
+				</el-form-item>
+				
+				<el-form-item>
+					<el-button type="primary" @click="dianji()">提交</el-button>
+					<el-button >重置</el-button>
+				</el-form-item>
+			</el-form>
+		</div>
+	</body>
+	<script type="text/javascript" src="../../js/jquery-1.12.4.js"></script>
+	<script type="text/javascript" src="../../js/vue.js"></script>
+	<script type="text/javascript" src="../../js/axios.min.js"></script>
+	<script type="text/javascript" src="../../js/axios_cfg.js"></script>
+	<script type="text/javascript" src="../../js/index.js"></script>
+	<script>
+		var _this;
+		var app = new Vue({
+			el: "#modeltype2",
+			data: {
+				
+				dialogVisible4: false,
+				brandid:null,
+				brandname:null,
+			},
+
+			methods: { //方法的集合
+
+				//提交
+				dianji: function() {
+					axios({
+						method: "post",
+						url: "http://127.0.0.1:8080/api/persons/lyw/Brandaction/dzwbrandlyw",
+						data:{
+							brandname:_this.brandname
+						}
+					}).then(response => {
+						console.log(response)
+						var api = response.data
+						if(api.code == 200) {
+							location.href="../lyw/brand.html"
+
+						}
+
+					})
+				}
+
+			},
+			mounted() {
+				_this = this;
+				
+
+			}
+
+		});
+	</script>
+
+</html>

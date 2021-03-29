@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>客户资料</title>
+		<link rel="stylesheet" type="text/css" href="../../css/index.css" />
+	</head>
+	<style>
+
+	</style>
+
+	<body>
+		<div id="clientDataApp">
+			<el-row :gutter="20">
+				<el-col :span="6">
+					<!--<div class="grid-content bg-purple">
+						<h2>客户资料管理</h2></div>-->
+				</el-col>
+				<el-col :span="6" :offset="6">
+					<div class="grid-content bg-purple">&nbsp;</div>
+				</el-col>
+			</el-row>
+			<el-row>
+				<el-col :span="24">
+					<div class="grid-content bg-purple-dark">
+						<el-form :inline="true" class="demo-form-inline" style="width: 100%;">
+							<el-form-item label="客户名称：">
+								<el-input placeholder="请输入客户姓名" v-model="cdfName"></el-input>
+							</el-form-item>
+							<el-form-item>
+								<el-button type="primary" icon="el-icon-search" @click="clientdataQueryAll(1,pageSize)"></el-button>
+							</el-form-item>
+							<el-form-item>
+								<el-button type="success" @click=" clientAddpageinfo(),dialogVisible = true">添加数据</el-button>
+							</el-form-item>
+							<el-form-item>
+								<el-button type="success" @click=" clientAddCat_Dandu()">添加车辆</el-button>
+							</el-form-item>
+							<el-form-item>
+								<el-button type="warning" @click=" clientUpdatepageinfo()">编辑</el-button>
+							</el-form-item>
+						</el-form>
+					</div>
+				</el-col>
+			</el-row>
+			<el-row>
+				<el-col :span="24">
+					<div class="grid-content bg-purple-dark">
+						<template>
+							<el-table @row-click="queryByClientCat" :highlight-current-row="true" v-loading="loading" :data="clientList.list" height="300" border style="width: 100%">
+								<el-table-column prop="cdfNumber" label="客户编号">
+								</el-table-column>
+								<el-table-column prop="cdfName" label="客户姓名">
+								</el-table-column>
+								<el-table-column prop="cdfSex" label="客户性别">
+									<template slot-scope="temp">
+										<span v-if="temp.row.cdfSex==1">男</span>
+										<span v-else-if="temp.row.cdfSex==0">女</span>
+									</template>
+								</el-table-column>
+								<el-table-column prop="cdfAddress" label="客户地址">
+								</el-table-column>
+								<el-table-column prop="cdfIsvip" label="客户类型">
+									<template slot-scope="temp">
+										<span v-if="temp.row.cdfIsvip==1">会员</span>
+										<span v-else-if="temp.row.cdfIsvip==0">普通</span>
+									</template>
+								</el-table-column>
+							</el-table>
+						</template>
+						<div class="block">
+							<el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :page-sizes="[2, 4, 6, 8]" :page-size="100" :current-page="clientList.pageNum" :page-size="clientList.pageSize" layout="sizes, prev, pager, next" :total="clientList.total">
+							</el-pagination>
+						</div>
+
+					</div>
+				</el-col>
+			</el-row>
+
+			<el-row>
+				<el-col :span="24">
+					<div class="grid-content bg-purple-dark">
+						<template>
+							<el-tabs v-model="activeName" style="width: 100%;margin-top: 2%;">
+								<el-tab-pane label="用户车辆" name="first">
+									<template>
+										<el-table :data="catList.list" height="250" border style="width: 100%">
+											<el-table-column prop="vehicledatainfo.vdfPlatenum" label="车辆牌照">
+											</el-table-column>
+											<el-table-column prop="catBernd" label="车辆品牌">
+											</el-table-column>
+											<el-table-column prop="catType" label="车辆类型">
+											</el-table-column>
+											<el-table-column prop="vehicledatainfo.vdfPlace" label="车辆产地">
+											</el-table-column>
+											<el-table-column prop="vehicledatainfo.vdfColor" label="车辆颜色">
+											</el-table-column>
+											<el-table-column prop="vehicledatainfo.vdfVin" label="车辆车架号">
+											</el-table-column>
+										</el-table>
+									</template>
+								</el-tab-pane>
+								<el-tab-pane label="客户消费记录" name="second">
+
+								</el-tab-pane>
+							</el-tabs>
+						</template>
+					</div>
+				</el-col>
+			</el-row>
+			<el-dialog title="新增客户资料" :visible.sync="dialogVisible" width="50%" :before-close="handleClose">
+				<div id="clientDiv">
+
+				</div>
+			</el-dialog>
+
+			<el-dialog title="修改客户资料" :visible.sync="dialogVisibleUpdateClient" width="50%" :before-close="handleClose">
+				<div id="clientUpdateDiv">
+
+				</div>
+			</el-dialog>
+
+			<el-dialog title="新增客户车辆资料" :visible.sync="dialogVisibleAddCat" width="50%" :before-close="handleClose">
+				<div id="clientAddCatDiv">
+
+				</div>
+			</el-dialog>
+		</div>
+	</body>
+	<script type="text/javascript" src="../../js/jquery-1.12.4.js"></script>
+
+	<script type="text/javascript" src="../../js/san/city-data.js"></script>
+	<script type="text/javascript" src="../../js/san/mcShop.js"></script>
+	<script type="text/javascript" src="../../js/san/ShoppingCart.js"></script>
+
+	<script type="text/javascript" src="../../js/vue.js"></script>
+	<script type="text/javascript" src="../../js/axios.min.js"></script>
+	<script type="text/javascript" src="../../js/axios_cfg.js"></script>
+	<script type="text/javascript" src="../../js/index.js"></script>
+
+	<script type="text/javascript">
+		var _clientDataThis;
+		var clientDataVm = new Vue({
+			el: "#clientDataApp",
+			data: {
+				//客户资料数组
+				clientList: [],
+				//客户车辆资料
+				catList: [],
+				//客户姓名
+				cdfName: "",
+				loading: true,
+				//默认选中选项卡
+				activeName: 'first',
+				//显示新增客户模态框
+				dialogVisible: false,
+
+				//显示修改客户模态框
+				dialogVisibleUpdateClient: false,
+
+				//显示单独新增客户资料页面
+				dialogVisibleAddCat : false,
+				
+				pageSize : 2,
+			},
+			methods: {
+
+				//查询客户资料
+				clientdataQueryAll(pageNum, pageSize) {
+					axios({
+						url: "http://localhost:8080/api/Hxy/ClientdatainfoAction/clientdataQueryAll",
+						method: "get",
+						params: {
+							pageNum: pageNum,
+							pageSize: pageSize,
+							cdfName: _clientDataThis.cdfName
+
+						}
+					}).then(function(result) {
+						console.info(result.data);
+						_clientDataThis.clientList = result.data;
+						localStorage.removeItem("cdfNumber")
+					})
+				},
+
+				//查询客户车辆信息
+				queryByClientCat(row) {
+					axios({
+						url: "http://localhost:8080/api/Hxy/VehicledatainfoAction/queryByClientCat",
+						method: "get",
+						params: {
+							vdfCdfnum: row.cdfNumber,
+							pageNum: 1,
+							pageSize: 20,
+						}
+					}).then(function(result) {
+						console.info(result.data.list);
+						_clientDataThis.catList = result.data;
+						localStorage.setItem("cdfNumber", row.cdfNumber);
+					})
+				},
+
+				//关闭模态框
+				handleClose(done) {
+					this.$confirm('确认关闭？')
+						.then(_ => {
+							done();
+						})
+						.catch(_ => {});
+				},
+
+				//引入新增客户资料页面
+				clientAddpageinfo() {
+					$("#clientDiv").load("Dzw_clientAdd.html")
+				},
+
+				//引入修改客户资料页面
+				clientUpdatepageinfo() {
+					if(localStorage.getItem("cdfNumber") == null) {
+						_clientDataThis.dialogVisibleUpdateClient = false;
+						_clientDataThis.$message('请选择客户！');
+					} else {
+						_clientDataThis.dialogVisibleUpdateClient = true
+						$("#clientUpdateDiv").load("Dzw_clientUpdate.html");
+						//location.href="Dzw_clientUpdate.html";
+					}
+				},
+
+				//引入单独新增客户车辆资料页面
+				clientAddCat_Dandu() {
+					if(localStorage.getItem("cdfNumber") == null) {
+						_clientDataThis.dialogVisibleAddCat  = false;
+						_clientDataThis.$message('请选择客户！');
+					} else {
+						_clientDataThis.dialogVisibleAddCat = true
+						$("#clientAddCatDiv").load("Dzw_clientAddCatInfo.html")
+						//location.href="Dzw_clientUpdate.html";
+					}
+					
+				},
+				
+				handleSizeChange(val) {
+					_clientDataThis.pageSize = val;
+					_clientDataThis.clientdataQueryAll(_clientDataThis.clientList.pageNum, val);
+					_clientDataThis.catList = ""
+				},
+				handleCurrentChange(val) {
+					_clientDataThis.clientdataQueryAll(val, _clientDataThis.clientList.pageSize);
+				},
+			},
+			mounted() {
+				_clientDataThis = this;
+				setTimeout(function() {
+					_clientDataThis.clientdataQueryAll(1, 2);
+					_clientDataThis.loading = false;
+				}, 2000)
+			}
+		})
+	</script>
+
+</html>

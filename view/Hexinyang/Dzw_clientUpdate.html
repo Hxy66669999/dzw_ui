@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<link rel="stylesheet" type="text/css" href="../../css/index.css" />
+	</head>
+
+	<body>
+		<div id="clientUpdateApp">
+			<template>
+				<el-tabs v-model="activeName">
+					<el-tab-pane label="客户资料" name="first">
+						<el-form :inline="true" :model="ruleFormUpdateclient" class="demo-form-inline" :rules="rulesUpdateclient" ref="ruleFormUpdateclient">
+							<el-form-item label="客户名称" prop="cdfName">
+								<el-input v-model="ruleFormUpdateclient.cdfName" placeholder="客户名称"></el-input>
+							</el-form-item>
+							<el-form-item label="客户联系方式" prop="cdfPhone">
+								<el-input v-model="ruleFormUpdateclient.cdfPhone" placeholder="客户联系方式" type="age"></el-input>
+							</el-form-item><br />
+							<el-form-item label="客户类型" prop="cdfIsvip">
+								<el-select v-model="ruleFormUpdateclient.cdfIsvip" placeholder="请选择" @change="ShowVipUpdateClient">
+									<el-option label="普通" :value=0>
+										普通
+									</el-option>
+									<el-option label="会员" :value=1>
+										会员
+									</el-option>
+								</el-select>
+							</el-form-item>
+
+							<el-form-item label="性别" prop="cdfSex">
+								<el-radio-group v-model="ruleFormUpdateclient.cdfSex">
+									<el-radio :label=1>男</el-radio>
+									<el-radio :label=0>女</el-radio>
+								</el-radio-group>
+							</el-form-item><br />
+
+							<div v-show="clientUpdateShowVip">
+								<el-form-item label="会员卡号" prop="cdfVipaccount">
+									<el-input v-model="ruleFormUpdateclient.cdfVipaccount" placeholder="请输入会员卡号" :disabled="true"></el-input>
+								</el-form-item>
+								<el-form-item label="充值金额" prop="cdfVipmoney">
+									<el-input v-model="ruleFormUpdateclient.cdfVipmoney" placeholder="请输入充值金额" :disabled="true"></el-input>
+								</el-form-item>
+							</div>
+							<el-form-item label="详细地址">
+								<el-input style="width: 100%;" placeholder="详细地址" v-model="ruleFormUpdateclient.cdfAddress"></el-input>
+							</el-form-item>
+						</el-form>
+
+					</el-tab-pane>
+
+				
+				</el-tabs>
+				<el-button type="primary" @click="updateClientDataByNum" style="margin-left: 35%;">提交数据</el-button>
+			</template>
+		</div>
+	</body>
+	<script type="text/javascript" src="../../js/jquery-1.12.4.js"></script>
+	<script type="text/javascript" src="../../js/vue.js"></script>
+	<script type="text/javascript" src="../../js/axios.min.js"></script>
+	<script type="text/javascript" src="../../js/axios_cfg.js"></script>
+	<script type="text/javascript" src="../../js/index.js"></script>
+	<script type="text/javascript">
+		var _clientUpdateThis;
+		var clientUpdateMv = new Vue({
+			el: "#clientUpdateApp",
+			data: {
+				//默认选中客户资料
+				activeName: "first",
+
+				//客户资料
+				ruleFormUpdateclient: {
+					cdfNumber: "",
+					cdfName: '',
+					cdfPhone: '',
+					cdfSex: "",
+					cdfVipaccount: "",
+					cdfAddress: "",
+					cdfIsvip: "",
+					cdfVipmoney: "",
+					cdfModifier: "hxy",
+					cdfUpdatetime: new Date(),
+					cdfVipfen: "",
+				},
+				rulesUpdateclient: {
+					cdfName: [{
+							required: true,
+							message: '请输入客户名称',
+							trigger: 'blur'
+						},
+						{
+							min: 2,
+							max: 30,
+							message: '长度在 2 到 30 个字符',
+							trigger: 'blur'
+						}
+					],
+					cdfIsvip: [{
+						required: true,
+						message: '请选择活动区域',
+						trigger: 'change'
+					}],
+					cdfPhone: [{
+							required: true,
+							message: '请输入联系方式',
+							trigger: 'blur'
+						},
+						{
+							min: 11,
+							max: 11,
+							message: '长度必须11个数字',
+							trigger: 'blur'
+						},
+
+					],
+					cdfSex: [{
+						required: true,
+						message: '请填写性别',
+						trigger: 'blur'
+					}],
+
+				},
+
+				//显示会员的卡号文本框
+				clientUpdateShowVip: false,
+				
+				
+				
+
+			},
+			methods: {
+				//显示Vip
+				ShowVipUpdateClient() {
+					if(_clientUpdateThis.ruleFormUpdateclient.cdfIsvip == 1) {
+						_clientUpdateThis.clientUpdateShowVip = true
+					} else {
+						_clientUpdateThis.clientUpdateShowVip = false
+					}
+				},
+				//查询客户资料
+				queryByNum() {
+					_clientUpdateThis.ruleFormUpdateclient.cdfNumber = localStorage.getItem("cdfNumber");
+					axios({
+						url: "http://localhost:8080/api/Hxy/ClientdatainfoAction/queryByNum",
+						method: "get",
+						params: {
+							cdfNumber: _clientUpdateThis.ruleFormUpdateclient.cdfNumber
+						}
+					}).then(function(result) {
+						console.info(result.data);
+						_clientUpdateThis.ruleFormUpdateclient = result.data;
+						//查询客户是否是VIP
+						_clientUpdateThis.ShowVipUpdateClient();
+					})
+				},
+
+				//修改客户资料
+				updateClientDataByNum() {
+					_clientUpdateThis.ruleFormUpdateclient.cdfUpdatetime = new Date();
+					_clientUpdateThis.ruleFormUpdateclient.cdfModifier = "hxy";
+					axios({
+						url: "http://localhost:8080/api/Hxy/ClientdatainfoAction/updateClientDataByNum",
+						method: "post",
+						data: _clientUpdateThis.ruleFormUpdateclient,
+
+					}).then(function(result) {
+						console.info(result.data);
+						if(result.data.code == 200) {
+							_clientUpdateThis.$message(result.data.msg);
+						} else {
+							_clientUpdateThis.$message(result.data.msg);
+						}
+					})
+				},
+			},
+			mounted() {
+				_clientUpdateThis = this;
+				//查询客户资料
+				_clientUpdateThis.queryByNum();
+			}
+		})
+	</script>
+
+</html>

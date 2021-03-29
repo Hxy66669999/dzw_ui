@@ -75,7 +75,7 @@
                         align-="center">
                     <template slot-scope="temp">
                         <el-button @click="updateStaffShow(temp.$index)">编辑</el-button>
-                        <el-button @click="delectStaffFun(temp.row.staffId)" type="danger">删除</el-button>
+                        <el-button @click="delectStaffFun(temp.row)" type="danger">离职</el-button>
                     </template>
                 </el-table-column>
 
@@ -502,12 +502,12 @@
                         }
                     });
                 },
-                delectStaffFun(id){
+                delectStaffFun(row){
                     let _this = this;
-                    axios.delete(`http://localhost:8080/api/staff/${id}`).then(result=>{
+                    axios.post(`http://localhost:8080/api/dimission/`,row).then(result=>{
                         if (result.data.code == 200){
                             _this.$message({
-                                message: '恭喜你，删除成功！',
+                                message: '恭喜你，操作成功！',
                                 type: 'success'
                             });
                             _this.init(1,3);

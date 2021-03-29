@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<link rel="stylesheet" href="../../css/index.css" />
+		<style>
+			.el-table .warning-row {
+				background: oldlace;
+			}
+			
+			.el-table .success-row {
+				background: #f0f9eb;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div id="manufacturers">
+			<template>
+				<el-table :data="changjaing" style="width:1400px;  margin-left: 450px;" :row-class-name="tableRowClassName">
+					<el-table-column prop="firmnoid" label="厂商编号" width="150">
+					</el-table-column>
+					<el-table-column prop="firmnoname" label="厂商名称" width="150">
+					</el-table-column>
+					<el-table-column prop="firmnoaddress" label="厂商地址" width="150">
+					</el-table-column>
+					<el-table-column prop="firmnophone" label="公司电话" width="150">
+					</el-table-column>
+					<el-table-column prop="firmnolxr" label="联系人" width="150">
+					</el-table-column>
+					<el-table-column prop="firmnolxrphone" label="联系人电话" width="150">
+					</el-table-column>
+					<el-table-column prop="firmnofirmsevenst" label="供货备注" width="150">
+					</el-table-column>
+					<el-table-column  label="操作" width="200">
+							<template slot-scope="scope">
+									
+										<el-button @click="manufacturersshanchu1(scope.row.firmnoid)"  type="primary" icon="el-icon-edit" circle></el-button>
+
+										<el-button @click="manufacturersshanchu(scope.row.firmnoid)" type="danger" icon="el-icon-delete" circle></el-button>
+										
+										<el-button type="success" icon="el-icon-check"   @click="lywxinzeng" circle></el-button>
+									</template>
+					</el-table-column>
+				</el-table>
+			</template>
+			
+			<el-dialog @opened="handlerOpen" :before-close="handleClose" :visible.sync="dialogVisible" title="当前页面模态框" width="100%" center>
+				<div id="cnt">
+
+				</div>
+				<span slot="footer" class="dialog-footer">
+	    			<el-button @click="dialogVisible1=false">取 消</el-button>
+	    			<el-button type="primary">确 定</el-button>
+  				</span>
+			</el-dialog>
+			<el-dialog @opened="handlerOpenlyw2" :before-close="handleCloselyw2" :visible.sync="dialogVisiblelyw2" title="当前页面模态框" width="100%" center>
+				<div id="cnt">
+
+				</div>
+				<span slot="footer" class="dialog-footer">
+	    			<el-button @click="dialogVisible1=false">取 消</el-button>
+	    			<el-button type="primary">确 定</el-button>
+  				</span>
+			</el-dialog>
+		</div>
+
+	</body>
+	<script type="text/javascript" src="../../js/jquery-1.12.4.js"></script>
+	<script type="text/javascript" src="../../js/vue.js"></script>
+	<script type="text/javascript" src="../../js/axios.min.js"></script>
+	<script type="text/javascript" src="../../js/axios_cfg.js"></script>
+	<script type="text/javascript" src="../../js/index.js"></script>
+	<script>
+		var _this;
+		var app = new Vue({
+			el: "#manufacturers",
+			data: {
+				changjaing: [],
+				dialogVisible:false,
+				dialogVisiblelyw2:false
+				/*firmnoid: null,
+				firmnoname: null,
+				firmnoaddress: null,
+				firmnophone: null,
+				firmnolxr: null,
+				firmnolxrphone: null,
+				firmnofirmsevenst: null,
+				firmnocreator: null*/
+			},
+
+			methods: { //方法的集合
+				//查询全部厂商的方法
+				Query2: function() {
+					axios({
+						method: "get",
+						url: "http://127.0.0.1:8080/api/persons/lyw/Firmnoaction/Firmnoaction1",
+
+					}).then(response => {
+						var api = response.data
+						if(api.code == 200) {
+							_this.changjaing = api.data,
+								console.log(api.data)
+							/*for(var i = 0; i < api.data.length; i++) {
+								_this.firmnoid = api.data[i].firmnoid;
+								alert(_this.firmnoid)
+								_this.firmnoname = api.data[i].firmnoname;
+								_this.firmnoaddress = api.data[i].firmnoaddress;
+								_this.firmnophone = api.data[i].firmnophone;
+								_this.firmnolxr = api.data[i].firmnolxr;
+								_this.firmnolxrphone = api.data[i].firmnolxrphone;
+								_this.firmnofirmsevenst = api.data[i].firmnofirmsevenst;
+								_this.firmnocreator = api.data[i].firmnocreator;
+
+							}*/
+						}
+
+					})
+				},
+				lywxinzeng:function(){
+						_this.dialogVisiblelyw2=true;
+				},
+				tableRowClassName({
+					row,
+					rowIndex
+				}) {
+					if(rowIndex === 1) {
+						return 'warning-row';
+					} else if(rowIndex === 3) {
+						return 'success-row';
+					}
+					return '';
+				},
+				//修改厂商的状态		
+				manufacturersshanchu:function(id){
+						alert(id)
+					axios({
+						method: "get",
+						url: "http://127.0.0.1:8080/api/persons/lyw/Firmnoaction/Firmnoaction1/"+id,
+
+					}).then(response => {
+						var api = response.data
+						if(api.code == 200) {
+							_this.Query2();
+						}
+					})
+				},
+				manufacturersshanchu1:function(id){
+					alert(id)
+					_this.dialogVisible=true;
+					sessionStorage.setItem("firmnoid",id);
+				},
+				//第一个模态框
+				handlerOpen() {
+					$("#cnt").load('firmnoamend.html');
+				},
+				//第一个模态框
+				handleClose(done) {
+					this.$confirm('是否退出?', '提示', {
+						confirmButtonText: '确定',
+						cancelButtonText: '取消',
+						type: 'warning'
+					}).then(() => {
+						done(); //关闭	
+					}).catch(() => {
+
+					});
+
+				},
+				//第二个模态框
+				handlerOpenlyw2() {
+					$("#cnt").load('firmnoAdd.html');
+				},
+				//第二个模态框
+				handleCloselyw2(done) {
+					this.$confirm('是否退出?', '提示', {
+						confirmButtonText: '确定',
+						cancelButtonText: '取消',
+						type: 'warning'
+					}).then(() => {
+						done(); //关闭	
+					}).catch(() => {
+
+					});
+
+				},
+			},
+			mounted() {
+				_this = this;
+				_this.Query2();
+			}
+
+		});
+	</script>
+
+</html>

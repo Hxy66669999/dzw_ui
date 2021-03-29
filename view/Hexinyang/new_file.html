@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+
+	<body>
+			<el-tab-pane label="客户车辆" name="second">
+						<el-form :label-position="labelPosition" :inline="true" :model="ruleFormCatUpdatePage" :rules="rulesCatUpdatePage" ref="ruleFormCatUpdatePage" label-width="100px" class="demo-ruleForm">
+							<el-form-item label="客户编号">
+								<el-input v-model="ruleFormUpdatePage.cdfNumber" :disabled="true"></el-input>
+							</el-form-item>
+							<el-form-item label="车辆车牌" prop="vdfPlatenum">
+								<el-input v-model="ruleFormCatUpdatePage.vdfPlatenum"></el-input>
+							</el-form-item>
+							<el-form-item label="车辆品牌" prop="vdfBrand">
+								<el-select v-model="ruleFormCatUpdatePage.vdfBrand" placeholder="请选择车辆品牌" @change="queryCatType()">
+									<el-option v-for="(i,index) in brandListAddPageUpdatePage" :label="i.brandName" :value="i.brandId"></el-option>
+								</el-select>
+							</el-form-item>
+							<el-form-item label="车辆型号" prop="vdfType">
+								<el-select v-model="ruleFormCatUpdatePage.vdfType" placeholder="请选择车辆型号">
+									<el-option v-for="(i,index) in catTypeListAddPageUpdatePage" :label="i.modeltypeName" :value="i.modeltypeId"></el-option>
+								</el-select>
+							</el-form-item>
+							<el-form-item label="车辆产地" prop="vdfPlace">
+								<el-input v-model="ruleFormCatUpdatePage.vdfPlace" placeholder="请输入车辆产地"></el-input>
+							</el-form-item>
+							<el-form-item label="车辆颜色" prop="vdfColor">
+								<el-input v-model="ruleFormCatUpdatePage.vdfColor" placeholder="请选择车辆颜色"></el-input>
+							</el-form-item>
+							<el-form-item style="margin-left: 35%;">
+								<!--<el-button type="primary" @click="submitForm('ruleFormCat')">添加</el-button>-->
+								<!--<el-button @click="resetForm('ruleFormCat')">重置</el-button>-->
+							</el-form-item>
+						</el-form>
+					</el-tab-pane>
+	</body>
+
+</html>
+
+
+//车辆的对齐方式
+				labelPosition: "right",
+				//车辆的数据
+				ruleFormCat: {
+					vdfVin: '',
+					vdfPlatenum: '',
+					vdfBrand: 2,
+					vdfType: '',
+					vdfCdfnum: "",
+					vdfCreator: "hxy",
+					vdfDate: new Date(),
+					vdfRemove: 0,
+				},
+				rulesCat: {
+					vdfPlatenum: [{
+							required: true,
+							message: '请输入车牌',
+							trigger: 'blur'
+						},
+						{
+							min: 7,
+							max: 7,
+							message: '正确输入车牌',
+							trigger: 'blur'
+						}
+					],
+					vdfBrand: [{
+						required: true,
+						message: '请选择车辆品牌',
+						trigger: 'change'
+					}],
+					vdfType: [{
+						required: true,
+						message: '请选择车辆型号',
+						trigger: 'change'
+					}],
+
+				},
+
+				//车辆品牌数组
+				brandListAddPage: [],
+				//车辆类型数组
+				catTypeListAddPage: [],
