@@ -1,0 +1,13 @@
+*{
+    margin: 0;
+    padding: 0;
+}
+.index_root{
+    height: 100vh;
+}
+.el-header{
+    border-bottom: solid 1px #e6e6e6
+}
+.main-title{
+    margin-bottom: 20px;
+}

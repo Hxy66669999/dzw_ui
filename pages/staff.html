@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <div class="staff">
+        <el-row>
+            <el-col>
+                <el-form ref="form" :model="staff" label-width="80px">
+                    <el-row :gutter="2">
+                        <el-col :span="16">
+                            <el-col :span="12">
+                                <el-form-item label="员工编号">
+                                    <el-input v-model="staff.staffId"></el-input>
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="12">
+                                <el-form-item label="员工名称">
+                                    <el-input v-model="staff.staffName"></el-input>
+                                </el-form-item>
+                            </el-col>
+                        </el-col>
+                        <el-col :span="6" :offset="2">
+                            <el-button type="success" @click="init" icon="el-icon-search">查询</el-button>
+                            <el-button type="primary" @click="addStaffShow" icon="el-icon-plus">新增</el-button>
+                        </el-col>
+                    </el-row>
+                </el-form>
+            </el-col>
+        </el-row>
+        <template>
+            <el-table
+                    :data="PageInfo.list"
+                    style="width: 100%"
+                    @row-dblclick="tableRowDblclick"
+                    height="630">
+                <el-table-column
+                        prop="staffId"
+                        label="编号"
+                        width="100">
+                </el-table-column>
+                <el-table-column
+                        prop="staffEntryTime"
+                        label="入职时间"
+                        width="180">
+                </el-table-column>
+                <el-table-column
+                        prop="staffName"
+                        label="员工名称">
+                </el-table-column>
+                <el-table-column
+                        prop="staffSex"
+                        label="性别">
+                    <template slot-scope="temp">
+                        <el-tag :type="temp.row.staffSex == 0 ? '':'danger' ">{{temp.row.staffSex | sexFilter}}</el-tag>
+                    </template>
+                </el-table-column>
+                <el-table-column
+                        prop="staffEducation"
+                        label="学历">
+                </el-table-column>
+                <el-table-column
+                        prop="staffPhone"
+                        label="联系电话">
+                </el-table-column>
+                <el-table-column
+                        prop="staffRole"
+                        label="员工角色">
+                </el-table-column>
+                <el-table-column
+                        prop="address"
+                        label="操作"
+                        align-="center">
+                    <template slot-scope="temp">
+                        <el-button @click="updateStaffShow(temp.$index)">编辑</el-button>
+                        <el-button @click="delectStaffFun(temp.row.staffId)" type="danger">删除</el-button>
+                    </template>
+                </el-table-column>
+
+
+            </el-table>
+            <el-pagination
+                    @size-change="handleSizeChange"
+                    @current-change="handleCurrentChange"
+                    :current-page="PageInfo.pageNum"
+                    :page-sizes="[3, 4, 8, 12]"
+                    :page-size="PageInfo.pageSize"
+                    layout="total, sizes, prev, pager, next, jumper"
+                    :total="PageInfo.total">
+            </el-pagination>
+        </template>
+        <el-dialog
+                title="添加员工"
+                :visible.sync="bialogBool"
+                width="30%"
+                :close-on-click-modal="false"
+                @opened="addStaffOpen">
+            <el-row>
+                <el-row>
+                    <el-form :label-position="left" label-width="90px" :model="addStaff">
+                        <el-row :gutter="20">
+                            <el-col :span="10">
+                                <el-form-item label="员工编号：">
+                                    {{_thiszzx.pojoid}}
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="10">
+                                <el-form-item label="员工名称：">
+                                    <el-input v-model="addStaff.staffName"></el-input>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+                        <el-row :gutter="20">
+                            <el-col :span="10">
+                                <el-form-item label="员工性别：">
+                                    <el-radio v-model="addStaff.staffSex" label="0">男</el-radio>
+                                    <el-radio v-model="addStaff.staffSex" label="1">女</el-radio>
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="10">
+                                <el-form-item label="联系电话：">
+                                    <el-input v-model="addStaff.staffPhone"></el-input>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+                        <el-row :gutter="20">
+                            <el-col :span="10">
+                                <el-form-item label="地址：">
+                                    <el-input v-model="addStaff.staffHomeAddress"></el-input>
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="10">
+                                <el-form-item label="职位：">
+                                    <el-select v-model="addStaff.staffPositionCode" placeholder="请选择">
+                                        <el-option
+                                                v-for="item in positionOption"
+                                                :key="item.value"
+                                                :label="item.label"
+                                                :value="item.value"
+                                        ></el-option>
+                                    </el-select>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+                        <el-row :gutter="20">
+                            <el-col :span="10">
+                                <el-form-item label="角色：">
+                                    <el-select v-model="addStaff.staffRole" placeholder="请选择">
+                                        <el-option
+                                                v-for="item in rolesOption"
+                                                :key="item.value"
+                                                :label="item.label"
+                                                :value="item.value"
+                                        ></el-option>
+                                    </el-select>
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="10">
+                                <el-form-item label="学历：">
+                                    <el-select v-model="addStaff.staffEducation" placeholder="请选择">
+                                        <el-option
+                                                v-for="item in educationOption"
+                                                :key="item.value"
+                                                :label="item.label"
+                                                :value="item.value"
+                                        ></el-option>
+                                    </el-select>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+                        <el-row :gutter="20">
+                            <el-col :span="10">
+                                <el-form-item label="入职时间：">
+                                    <el-date-picker
+                                            v-model="addStaff.staffEntryTime"
+                                            type="datetime"
+                                            placeholder="选择日期时间">
+                                    </el-date-picker>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+
+                    </el-form>
+                </el-row>
+            </el-row>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="bialogBool = false">取 消</el-button>
+                <el-button type="primary" @click="addStaffFun">确 定</el-button>
+            </span>
+        </el-dialog>
+        <el-dialog
+                title="员工资料"
+                :visible.sync="bialogBool1"
+                width="30%"
+                :close-on-click-modal="false">
+            <el-row>
+                <el-form :label-position="left" label-width="90px" :model="staffBialog">
+                    <el-row>
+                        <el-col :span="12">
+                            <el-form-item label="员工编号：">
+                                {{staffBialog.staffId}}
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="12">
+                            <el-form-item label="员工名称：">
+                                {{staffBialog.staffName}}
+                            </el-form-item>
+                        </el-col>
+                    </el-row>
+                    <el-row>
+                        <el-col :span="12">
+                            <el-form-item label="员工性别：">
+                                <el-tag type="staffBialog.staffSex == 0 '':'danger'">{{staffBialog.staffSex | sexFilter}}</el-tag>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="12">
+                            <el-form-item label="联系电话：">
+                                {{staffBialog.staffPhone}}
+                            </el-form-item>
+                        </el-col>
+                    </el-row>
+                    <el-row>
+                        <el-col :span="12">
+                            <el-form-item label="地址：">
+                                {{staffBialog.staffHomeAddress}}
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="12">
+                            <el-form-item label="职位：">
+                                {{staffBialog.staffPositionCode}}
+                            </el-form-item>
+                        </el-col>
+                    </el-row>
+                    <el-form-item label="入职时间：">
+                        {{staffBialog.staffEntryTime}}
+                    </el-form-item>
+                </el-form>
+            </el-row>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="bialogBool = false">取 消</el-button>
+                <el-button type="primary" @click="addStaff">确 定</el-button>
+            </span>
+        </el-dialog>
+        <el-dialog
+                title="修改员工资料"
+                :visible.sync="bialogBool2"
+                width="35%"
+                :close-on-click-modal="false">
+            <el-row>
+                <el-form :label-position="left" label-width="90px" :model="uodateStaff">
+                    <el-row :gutter="20">
+                        <el-col :span="10">
+                            <el-form-item label="员工编号：">
+                                {{uodateStaff.staffId}}
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="10">
+                            <el-form-item label="员工名称：">
+                                <el-input v-model="uodateStaff.staffName"></el-input>
+                            </el-form-item>
+                        </el-col>
+                    </el-row>
+                    <el-row :gutter="20">
+                        <el-col :span="10">
+                            <el-form-item label="员工性别：">
+                                <el-radio v-model="uodateStaff.staffSex" label="0">男</el-radio>
+                                <el-radio v-model="uodateStaff.staffSex" label="1">女</el-radio>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="10">
+                            <el-form-item label="联系电话：">
+                                <el-input v-model="uodateStaff.staffPhone"></el-input>
+                            </el-form-item>
+                        </el-col>
+                    </el-row>
+                    <el-row :gutter="20">
+                        <el-col :span="10">
+                            <el-form-item label="地址：">
+                                <el-input v-model="uodateStaff.staffHomeAddress"></el-input>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="10">
+                            <el-form-item label="职位：">
+                                <el-select v-model="uodateStaff.staffPositionCode" placeholder="请选择">
+                                    <el-option
+                                            v-for="item in positionOption"
+                                            :key="item.value"
+                                            :label="item.label"
+                                            :value="item.value"
+                                    ></el-option>
+                                </el-select>
+                            </el-form-item>
+                        </el-col>
+                    </el-row>
+                    <el-row :gutter="20">
+                        <el-col :span="10">
+                            <el-form-item label="角色：">
+                                <el-select v-model="uodateStaff.staffRole" placeholder="请选择">
+                                    <el-option
+                                            v-for="item in rolesOption"
+                                            :key="item.value"
+                                            :label="item.label"
+                                            :value="item.value"
+                                    ></el-option>
+                                </el-select>
+                            </el-form-item>
+                        </el-col>
+                        <el-row>
+                            <el-form-item label="学历：">
+                                <el-select v-model="uodateStaff.staffEducation" placeholder="请选择">
+                                    <el-option
+                                            v-for="item in educationOption"
+                                            :key="item.value"
+                                            :label="item.label"
+                                            :value="item.value"
+                                    ></el-option>
+                                </el-select>
+                            </el-form-item>
+                        </el-row>
+                    </el-row>
+                    <el-row :gutter="20">
+                        <el-col :span="10">
+                            <el-form-item label="入职时间：">
+                                <el-date-picker
+                                        v-model="uodateStaff.staffEntryTime"
+                                        type="datetime"
+                                        placeholder="选择日期时间">
+                                </el-date-picker>
+                            </el-form-item>
+                        </el-col>
+                    </el-row>
+
+                </el-form>
+            </el-row>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="bialogBool2 = false">取 消</el-button>
+                <el-button type="primary" @click="updateStaff">确 定</el-button>
+            </span>
+        </el-dialog>
+    </div>
+    <!--                    <el-row>
+                        <el-col :span="12">
+
+                        </el-col>
+                        <el-col :span="12">
+
+                        </el-col>
+                    </el-row>-->
+
+    <script>
+        var staff = new Vue({
+            el: ".staff",
+            data:{
+                PageInfo:null,
+                staff: {
+                    staffName: null,
+                    stafAddDate: null,
+                    stafAddPeople: null,
+                    stafDeletedMarker: null,
+                    stafUpdateDate: null,
+                    stafUpdatePeople: null,
+                    staffEducation: null,
+                    staffEntryTime: null,
+                    staffHomeAddress: null,
+                    staffId: null,
+                    staffPhone: null,
+                    staffPositionCode: null,
+                    staffRole: null,
+                    staffSex: null,
+                    staffStarsId: null,
+                    staffTeamId: null,
+                },
+                addStaff: {
+                    staffName: null,
+                    stafAddDate: null,
+                    stafAddPeople: null,
+                    stafDeletedMarker: null,
+                    stafUpdateDate: null,
+                    stafUpdatePeople: null,
+                    staffEducation: null,
+                    staffEntryTime: null,
+                    staffHomeAddress: null,
+                    staffId: null,
+                    staffPhone: null,
+                    staffPositionCode: null,
+                    staffRole: null,
+                    staffSex: null,
+                    staffStarsId: null,
+                    staffTeamId: null,
+                },
+                uodateStaff: {
+                    staffName: null,
+                    stafAddDate: null,
+                    stafAddPeople: null,
+                    stafDeletedMarker: null,
+                    stafUpdateDate: null,
+                    stafUpdatePeople: null,
+                    staffEducation: null,
+                    staffEntryTime: null,
+                    staffHomeAddress: null,
+                    staffId: null,
+                    staffPhone: null,
+                    staffPositionCode: null,
+                    staffRole: null,
+                    staffSex: null,
+                    staffStarsId: null,
+                    staffTeamId: null,
+                },
+                bialogBool: false,
+                bialogBool1: false,
+                bialogBool2: false,
+                staffBialog: {
+                    staffName: null,
+                    stafAddDate: null,
+                    stafAddPeople: null,
+                    stafDeletedMarker: null,
+                    stafUpdateDate: null,
+                    stafUpdatePeople: null,
+                    staffEducation: null,
+                    staffEntryTime: null,
+                    staffHomeAddress: null,
+                    staffId: null,
+                    staffPhone: null,
+                    staffPositionCode: null,
+                    staffRole: null,
+                    staffSex: null,
+                    staffStarsId: null,
+                    staffTeamId: null,
+                },
+                sexOption:[
+                    {value:"0",label:"男"},
+                    {value:"1",label:"女"},
+                ],
+                positionOption:[
+                    {value:"0",label:"总经理"},
+                    {value:"1",label:"副经理"},
+                ],
+                rolesOption:[
+                    {value:'0',label:'q'}
+                ],
+                educationOption:[],
+                pageNum:1,
+                pageSize:3,
+            },
+            methods:{
+                init(n,s){
+                    axios.get(`http://localhost:8080/api/staff/${n}/${s}`).then(result=>{
+                        this.PageInfo = result.data.data;
+                    })
+                },
+                addStaffF(){
+
+                },
+                tableRowDblclick(row,column){
+                    this.staffBialog = row;
+                    this.bialogBool1 = true;
+                },
+                updateStaffShow(id){
+                    this.uodateStaff.staffName = this.PageInfo.list[id].staffName
+                    this.uodateStaff.stafAddDate = this.PageInfo.list[id].stafAddDate
+                    this.uodateStaff.stafAddPeople = this.PageInfo.list[id].stafAddPeople
+                    this.uodateStaff.stafDeletedMarker = this.PageInfo.list[id].stafDeletedMarker
+                    this.uodateStaff.stafUpdateDate = this.PageInfo.list[id].stafUpdateDate
+                    this.uodateStaff.stafUpdatePeople = this.PageInfo.list[id].stafUpdatePeople
+                    this.uodateStaff.staffEducation = this.PageInfo.list[id].staffEducation
+                    this.uodateStaff.staffEntryTime = this.PageInfo.list[id].staffEntryTime
+                    this.uodateStaff.staffHomeAddress = this.PageInfo.list[id].staffHomeAddress
+                    this.uodateStaff.staffId = this.PageInfo.list[id].staffId
+                    this.uodateStaff.staffPhone = this.PageInfo.list[id].staffPhone
+                    this.uodateStaff.staffPositionCode = this.PageInfo.list[id].staffPositionCode
+                    this.uodateStaff.staffRole = this.PageInfo.list[id].staffRole
+                    this.uodateStaff.staffSex = this.PageInfo.list[id].staffSex
+                    this.uodateStaff.staffStarsId = this.PageInfo.list[id].staffStarsId
+                    this.uodateStaff.staffTeamId = this.PageInfo.list[id].staffTeamId
+                    this.bialogBool2 = true;
+                },
+                updateStaff(){
+                    let _this = this;
+                    axios.put(`http://localhost:8080/api/staff`,this.uodateStaff).then(result=>{
+                        if (result.data.code == 200){
+                            _this.$message({
+                                message: '恭喜你，修改成功！',
+                                type: 'success'
+                            });
+                            _this.bialogBool2 = false;
+                            _this.init(1,3);
+                        }
+                    })
+                },
+                addStaffFun(){
+                    let _this = this;
+                    axios.post(`http://localhost:8080/api/staff`,this.addStaff).then(result=>{
+                        if (result.data.code == 200){
+                            _this.$message({
+                                message: '恭喜你，添加成功！',
+                                type: 'success'
+                            });
+                            _this.bialogBool = false;
+                            _this.init(1,3);
+                        }
+                    });
+                },
+                delectStaffFun(id){
+                    let _this = this;
+                    axios.delete(`http://localhost:8080/api/staff/${id}`).then(result=>{
+                        if (result.data.code == 200){
+                            _this.$message({
+                                message: '恭喜你，删除成功！',
+                                type: 'success'
+                            });
+                            _this.init(1,3);
+                        }
+                    });
+                },
+                initPositionOption(){
+                    axios.get(`http://localhost:8080/api/position`).then(result=>{
+                        this.positionOption = result.data.data;
+                    });
+                },
+                initEducationOption(){
+                    axios.get(`http://localhost:8080/api/education`).then(result=>{
+                        this.educationOption = result.data.data;
+                    })
+                },
+                addStaffShow(){
+                    staff.bialogBool = true;
+                },
+                addStaffOpen(){
+                    // todo 打开之后需要关闭才会有id
+                    index_root.getPojoId();
+                    setTimeout(function (){
+                        staff.addStaff.staffId = _thiszzx.pojoid;
+                    },1000)
+                },
+                addStaffFun(){
+                    let _this = this;
+                    axios.post(`http://localhost:8080/api/staff`,this.addStaff).then(result=>{
+                        if (result.data.code == 200){
+                            _this.$message({
+                                message: '恭喜你，添加成功！',
+                                type: 'success'
+                            });
+                            _this.bialogBool = false;
+                            _this.init(1,3);
+                        }
+                    });
+                },
+                handleSizeChange(val){
+                    this.pageSize = val;
+                    this.init(this.pageNum,this.pageSize);
+                },
+                handleCurrentChange(val){
+                    this.pageNum = val;
+                    this.init(this.pageNum,this.pageSize);
+                }
+            },
+            filters:{
+                sexFilter: function (i){
+                    return  i == 1?"女":"男";
+                }
+            },
+            mounted(){
+                this.init(this.pageNum,this.pageSize);
+                this.initPositionOption();
+                this.initEducationOption();
+            }
+        })
+    </script>
+</body>
+</html>

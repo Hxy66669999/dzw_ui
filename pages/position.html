@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link href="" rel="stylesheet" type="text/css">
+</head>
+<body>
+    <div class="position">
+        <el-row>
+            <el-col :span="24">
+                <el-row>
+                    <el-col>
+                        <el-form ref="form" :model="position" label-width="80px">
+                            <el-row :gutter="2">
+                                <el-col :span="16">
+                                    <el-col :span="12">
+                                        <el-form-item label="岗位编号">
+                                            <el-input v-model="position.positionId"></el-input>
+                                        </el-form-item>
+                                    </el-col>
+                                    <el-col :span="12">
+                                        <el-form-item label="岗位名称">
+                                            <el-input v-model="position.positionName"></el-input>
+                                        </el-form-item>
+                                    </el-col>
+                                </el-col>
+                                <el-col :span="6" :offset="2">
+                                    <el-button type="success" @click="init" icon="el-icon-search">查询</el-button>
+                                    <el-button type="primary" @click="bialogBool = true" icon="el-icon-plus">新增</el-button>
+                                </el-col>
+                            </el-row>
+                        </el-form>
+                    </el-col>
+                </el-row>
+                <el-row>
+                    <el-col>
+                        <el-table :data="positions" border="true">
+                            <el-table-column label="岗位编号" prop="positionId" width="100px"></el-table-column>
+                            <el-table-column label="岗位名称" prop="positionName"></el-table-column>
+                            <el-table-column label="岗位代码" prop="positionCode"></el-table-column>
+                            <el-table-column label="操作" align="center">
+                                <template slot-scope="temp">
+                                    <el-button @click="updatePositionff(temp.$index)">编辑</el-button>
+                                    <el-button @click="deletePositionf(temp.row.positionId)" type="danger">删除</el-button>
+                                </template>
+                            </el-table-column>
+                        </el-table>
+                    </el-col>
+                </el-row>
+            </el-col>
+        </el-row>
+        <el-dialog
+                title="添加岗位"
+                :visible.sync="bialogBool"
+                width="30%"
+                :close-on-click-modal="false">
+            <el-row>
+                <el-form :model="addPosition">
+                    <el-row>
+                        <el-col>
+                            <el-form-item label="岗位名称">
+                                <el-input v-model="addPosition.positionName"></el-input>
+                            </el-form-item>
+                        </el-col>
+                    </el-row>
+                    <el-row>
+                        <el-col>
+                            <el-form-item label="岗位代码">
+                                <el-input v-model="addPosition.positionCode"></el-input>
+                            </el-form-item>
+                        </el-col>
+                    </el-row>
+                </el-form>
+            </el-row>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="bialogBool = false">取 消</el-button>
+                <el-button type="primary" @click="addPositionf">确 定</el-button>
+            </span>
+        </el-dialog>
+        <el-dialog
+                title="修改岗位"
+                :visible.sync="bialogBool1"
+                width="30%"
+                :close-on-click-modal="false">
+            <el-row>
+                <el-form :model="position1">
+                    <el-row>
+                        <el-col>
+                            <el-form-item label="岗位名称">
+                                <el-input v-model="position1.positionName"></el-input>
+                            </el-form-item>
+                        </el-col>
+                    </el-row>
+                    <el-row>
+                        <el-col>
+                            <el-form-item label="岗位代码">
+                                <el-input v-model="position1.positionCode"></el-input>
+                            </el-form-item>
+                        </el-col>
+                    </el-row>
+                </el-form>
+            </el-row>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="bialogBool1 = false">取 消</el-button>
+                <el-button type="primary" @click="updatePositionf">修 改</el-button>
+            </span>
+        </el-dialog>
+    </div>
+    <script>
+        new Vue({
+            el:".position",
+            data:{
+                positions:[],
+                position:{
+                    positionId: null,
+                    positionName: null,
+                },
+                addPosition:{
+                    positionId: null,
+                    positionName: null,
+                    positionCode: null,
+                },
+                position1:{
+                    positionId: null,
+                    positionName: null,
+                    positionCode: null,
+                },
+                PageInfo: null,
+                bialogBool: false,
+                bialogBool1: false,
+            },
+            methods:{
+                init(){
+                    axios.post(`http://127.0.0.1:8080/api/position/positionList`,this.position).then(result=>{
+                        this.positions = result.data.data;
+                    })
+                },
+                addPositionf(){
+                    let _this = this;
+                    axios.post(`http://127.0.0.1:8080/api/position/add`,this.addPosition).then(result=>{
+                        if (result.data.code == 200){
+                            _this.$message({
+                                message: '恭喜你，新增成功！',
+                                type: 'success'
+                            });
+                            _this.bialogBool = false;
+                            _this.init();
+                        }
+                    })
+                },
+                deletePositionf(id){
+                    let _this = this;
+                    _this.$confirm('此操作将删除该岗位, 是否继续?', '提示', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning'
+                    }).then(() => {
+                        axios.delete(`http://127.0.0.1:8080/api/position/${id}`).then(result=>{
+                            if (result.data.code == 200){
+                                _this.$message({
+                                    message: '恭喜你，删除成功！',
+                                    type: 'success'
+                                });
+                                _this.init();
+                            }
+                        });
+                    }).catch(() => {
+                        this.$message({
+                            type: 'info',
+                            message: '已取消删除'
+                        });
+                    });
+                },
+                updatePositionff(i){
+                    this.bialogBool1 = true;
+                    this.position1.positionId = this.positions[i].positionId;
+                    this.position1.positionName = this.positions[i].positionName;
+                    this.position1.positionCode = this.positions[i].positionCode;
+                },
+                updatePositionf(){
+                    let _this = this;
+                    axios.put(`http://127.0.0.1:8080/api/position`,this.position1).then(result=>{
+                        if (result.data.code == 200){
+                            _this.$message({
+                                message: '恭喜你，修改成功！',
+                                type: 'success'
+                            });
+                            _this.bialogBool1 = false;
+                            _this.init();
+                        }
+                    })
+                }
+            },
+            mounted(){
+                this.init();
+            }
+        })
+    </script>
+</body>
+</html>

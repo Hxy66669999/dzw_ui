@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="4ec761b9-276f-4e62-8c90-a7707b985bb4" name="Default Changelist" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="CSS File" />
+        <option value="HTML File" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectId" id="1q6LcIFOezAyTzTnCXhqNfTydhL" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="DefaultHtmlFileTemplate" value="HTML File" />
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/js" />
+    <property name="list.type.of.created.stylesheet" value="CSS" />
+    <property name="settings.editor.selected.configurable" value="preferences.lookFeel" />
+    <property name="vue.rearranger.settings.migration" value="true" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="E:\Y2\项目\dzw\dzw_ui\js" />
+      <recent name="E:\Y2\项目\dzw\dzw_ui" />
+    </key>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="4ec761b9-276f-4e62-8c90-a7707b985bb4" name="Default Changelist" comment="" />
+      <created>1616395171095</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1616395171095</updated>
+      <workItem from="1616395172194" duration="994000" />
+      <workItem from="1616396586799" duration="779000" />
+      <workItem from="1616469552512" duration="6129000" />
+      <workItem from="1616598187392" duration="6701000" />
+      <workItem from="1616630474240" duration="11780000" />
+      <workItem from="1616658963760" duration="7336000" />
+      <workItem from="1616687133119" duration="3327000" />
+      <workItem from="1616717572943" duration="8988000" />
+      <workItem from="1616771496241" duration="3981000" />
+      <workItem from="1616818374679" duration="2105000" />
+      <workItem from="1616830948284" duration="156000" />
+      <workItem from="1616831118779" duration="7774000" />
+      <workItem from="1616907438247" duration="2576000" />
+      <workItem from="1616927853291" duration="52000" />
+      <workItem from="1616928045484" duration="8946000" />
+      <workItem from="1616946625575" duration="5622000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+</project>

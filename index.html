@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>德昭文汽修管理系统</title>
+		<link rel="stylesheet" href="css/index.css">
+		<link rel="stylesheet" href="css/dzw_index.css">
+		<link rel="stylesheet" href="css/woke.css">
+	</head>
+	<body>
+		<div class="index_root">
+			<el-container>
+				<el-header>
+					<el-container>
+								<el-link  @click="showUrl('woke')"  :underline="false">德召文汽修管理系统</el-link>
+							<el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal" @select="handleSelect">
+								<el-menu-item index="1" >前台</el-menu-item>
+								<el-menu-item index="2" >维修</el-menu-item>
+								<el-menu-item index="3" >客户</el-menu-item>
+								<el-menu-item index="4">数据</el-menu-item>
+							</el-menu>
+					</el-container>
+				</el-header>
+				<el-container>
+					<el-aside>
+						<el-menu default-active="1" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose" :collapse="isCollapse">
+							<el-menu-item index="1" @click="showUrl('woke','数据总览')">
+								<i class="el-icon-s-marketing"></i>
+								<span slot="title">总览</span>
+							</el-menu-item>
+							<el-menu-item index="2" >
+								<i class="el-icon-s-home"></i>
+								<span slot="title">前台</span>
+							</el-menu-item>
+							<el-menu-item index="3" >
+								<i class="el-icon-s-tools"></i>
+								<span slot="title">维修</span>
+							</el-menu-item>
+							<el-menu-item index="4" >
+								<i class="el-icon-user-solid"></i>
+								<span slot="title">客户</span>
+							</el-menu-item>
+							<el-submenu index="5">
+								<template slot="title">
+									<i class="el-icon-s-custom"></i>
+									<span>人事</span>
+								</template>
+								<el-menu-item-group>
+									<el-menu-item index="5-1" @click="showUrl('staff','员工管理')">
+										<i class="el-icon-arrow-right"></i>
+										员工</el-menu-item>
+									<el-menu-item index="5-2" @click="showUrl('position','岗位管理')">
+										<i class="el-icon-arrow-right"></i>
+										岗位</el-menu-item>
+									<el-menu-item index="5-3">
+										<i class="el-icon-arrow-right"></i>
+										离职</el-menu-item>
+									<el-menu-item index="5-4">
+										<i class="el-icon-arrow-right"></i>
+										通讯录</el-menu-item>
+								</el-menu-item-group>
+							</el-submenu>
+							<el-menu-item index="6">
+								<i class="el-icon-s-data"></i>
+								<span slot="title">数据</span>
+							</el-menu-item>
+						</el-menu>
+					</el-aside>
+					<el-main>
+						<h2 class="main-title">XX管理</h2>
+						<div class="cnt"></div>
+					</el-main>
+				</el-container>
+				<el-footer></el-footer>
+			</el-container>
+		</div>
+
+		<script src="js/axios.min.js"></script>
+		<script src="js/axios_cfg.js"></script>
+		<script src="js/vue.js"></script>
+		<script src="js/index.js"></script>
+		<script src="js/jquery-1.12.4.js"></script>
+		<script src="js/jquery-3.5.1.min.js"></script>
+		<script src="js/echarts.5.0.2.min.js"></script>
+		<script>
+			var _thiszzx;
+			var index_root = new Vue({
+				el:".index_root",
+				data:{
+					pojoid: null,
+				},
+				methods:{
+					showUrl(url,title){
+						$(".cnt").load("pages/"+url+".html");
+						$(".main-title").html(title)
+					},
+					getPojoId(){
+						axios.get(`http://localhost:8080/api/pojocommon/getpojoid`).then(result=>{
+							this.pojoid = parseInt(result.data.data);
+						});
+					},
+				},
+				mounted(){
+					this.showUrl("staff", "员工管理");
+					_thiszzx = this;
+				}
+			})
+		</script>
+	</body>
+</html>

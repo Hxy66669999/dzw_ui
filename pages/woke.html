@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <div class="woke">
+        <el-row :gutter="20">
+            <el-col :span="6">
+                <el-card class="card" shadow="hover">
+                    <p class="card-title">今日接单数量</p>
+                    <p>
+                        <span class="card-title-item"><span class="card-title-info">站内</span><span class="card-title-numde">{{cards.orderQuantity.within}}</span></span>
+                        <span class="card-title-item"><span class="card-title-info">站外</span><span class="card-title-numde">{{cards.orderQuantity.outer}}</span></span>
+                    </p>
+                </el-card>
+            </el-col>
+            <el-col :span="6">
+                <el-card class="card" shadow="hover">
+                    <p class="card-title">今日结算单数</p>
+                    <p>
+                        <span class="card-title-item"><span class="card-title-numde">{{cards.SettlementNum}}</span></span>
+                    </p>
+                </el-card>
+            </el-col>
+            <el-col :span="6">
+                <el-card class="card" shadow="hover">
+                    <p class="card-title">今日客户新增数量</p>
+                    <p>
+                        <span class="card-title-item"><span class="card-title-info">普通</span><span class="card-title-numde">{{cards.theNewCustomer.common}}</span></span>
+                        <span class="card-title-item"><span class="card-title-info">会员</span><span class="card-title-numde">{{cards.theNewCustomer.member}}</span></span>
+                    </p>
+                </el-card>
+            </el-col>
+            <el-col :span="6">
+                <el-card class="card" shadow="hover">
+                    <p class="card-title">今日收入</p>
+                    <p>
+                        <span class="card-title-item"><span class="card-title-info">总 ￥</span><span class="card-title-numde">{{cards.income.total}}</span></span>
+                        <span class="card-title-item"><span class="card-title-info">抵扣金额 ￥</span><span class="card-title-numde">{{cards.income.deduction}}</span></span>
+                    </p>
+                </el-card>
+            </el-col>
+        </el-row>
+        <el-divider></el-divider>
+        详细数据
+        <el-row>
+            <el-col :span="24">
+                <div id="woke_e_1" style="width: 100%;height:550px;"></div>
+            </el-col>
+        </el-row>
+    </div>
+    <script>
+        var woke = new Vue({
+            el:".woke",
+            data:{
+                cards: {
+                    orderQuantity: {
+                        within:10,
+                        outer:5,
+                    },
+                    SettlementNum:22,
+                    theNewCustomer: {
+                        common: 2,
+                        member: 1,
+                    },
+                    income:{
+                        total: 6730,
+                        deduction: 322,
+                    }
+                }
+            }
+        })
+
+
+        // 基于准备好的dom，初始化echarts实例
+        var myChart = echarts.init(document.getElementById('woke_e_1'));
+        // 指定图表的配置项和数据
+        var option = {
+            tooltip: {},
+            xAxis: {
+                type: 'category',
+                data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
+                boundaryGap: false,
+            },
+            yAxis: {
+                type: 'value'
+            },
+            series: [{
+                data: [820, 932, 901, 934, 1290, 1330, 1320],
+                type: 'line',
+                smooth: false,
+                areaStyle: {}
+            }]
+        };
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option);
+    </script>
+</body>
+</html>

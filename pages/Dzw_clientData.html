@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>客户资料</title>
+		<link rel="stylesheet" type="text/css" href="../css/index.css" />
+	</head>
+	<style>
+
+	</style>
+
+	<body>
+		<div id="clientDataapp">
+			<el-row :gutter="20">
+				<el-col :span="6" >
+					<div class="grid-content bg-purple">
+						<h2>客户资料管理</h2></div>
+				</el-col>
+				<el-col :span="6" :offset="6">
+					<div class="grid-content bg-purple">&nbsp;</div>
+				</el-col>
+			</el-row>
+			<el-row>
+				<el-col :span="24" >
+					<div class="grid-content bg-purple-dark" >
+						<el-form :inline="true" class="demo-form-inline" style="width: 92%;">
+							<el-form-item label="客户名称：">
+								<el-input placeholder="请输入"></el-input>
+							</el-form-item>
+							<el-form-item>
+								<el-button type="primary" icon="el-icon-search"></el-button>
+							</el-form-item>
+							<el-form-item>
+								<el-button type="success">添加数据</el-button>
+							</el-form-item>
+							<el-form-item>
+								<el-button type="success">添加车辆</el-button>
+							</el-form-item>
+							<el-form-item>
+								<el-button type="warning">编辑</el-button>
+							</el-form-item>
+						</el-form>
+					</div>
+				</el-col>
+			</el-row>
+			<el-row>
+				<el-col :span="24" >
+					<div class="grid-content bg-purple-dark">
+						<template>
+							<el-table :data="tableData" height="300" border style="width: 100%">
+								<el-table-column prop="date" label="日期" width="180">
+								</el-table-column>
+								<el-table-column prop="name" label="姓名" width="180">
+								</el-table-column>
+								<el-table-column prop="address" label="地址" width="180">
+								</el-table-column>
+								<el-table-column prop="date" label="日期" width="180">
+								</el-table-column>
+								<el-table-column prop="name" label="姓名" width="180">
+								</el-table-column>
+								<el-table-column prop="address" label="地址" width="180">
+								</el-table-column>
+								<el-table-column prop="name" label="姓名" width="180">
+								</el-table-column>
+								<el-table-column prop="address" label="地址" width="180">
+								</el-table-column>
+							</el-table>
+						</template>
+					</div>
+				</el-col>
+			</el-row>
+			<el-row>
+				<el-col :span="24" >
+					<div class="grid-content bg-purple-dark">
+						<template>
+							<el-tabs v-model="activeName" @tab-click="handleClick" style="width: 100%;margin-top: 2%;">
+								<el-tab-pane label="用户管理" name="first">用户管理</el-tab-pane>
+								<el-tab-pane label="配置管理" name="second">配置管理</el-tab-pane>
+								<el-tab-pane label="角色管理" name="third">角色管理</el-tab-pane>
+								<el-tab-pane label="定时任务补偿" name="fourth">定时任务补偿</el-tab-pane>
+							</el-tabs>
+						</template>
+					</div>
+				</el-col>
+			</el-row>
+		</div>
+	</body>
+	<script type="text/javascript">
+		var _this;
+		var vm = new Vue({
+			el: "#clientDataapp",
+			data: {
+
+			},
+			methods: {
+
+			},
+			mounted() {
+				_this = this;
+				setTimeout(function() {
+				}, 2000)
+			}
+		})
+	</script>
+
+</html>
