@@ -13,13 +13,17 @@
         var dimission = new Vue({
             el:".dimission",
             data:{
-
+                PageInfo:null,
             },
             methods:{
-
+                init(){
+                    axios.get(`http://localhost:8080/api/dimission`).then(result=>{
+                        
+                    })
+                }
             },
             mounted(){
-
+                this.init();
             }
         })
     </script>
