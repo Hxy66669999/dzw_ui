@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>新增客户资料</title>
+		<link rel="stylesheet" type="text/css" href="../../css/index.css" />
+	</head>
+
+	<body>
+		<div id="myVue">
+
+			<template>
+				<el-tabs @tab-click="" v-model="activeNameAddPage">
+					<el-tab-pane label="客户资料" name="firstAddPage">
+
+						<el-form :inline="true" :model="ruleForm" class="demo-form-inline" :rules="rules" ref="ruleForm">
+							<el-form-item label="客户名称" prop="cdfName">
+								<el-input v-model="ruleForm.cdfName" placeholder="客户名称"></el-input>
+							</el-form-item>
+							<el-form-item label="客户联系方式" prop="cdfPhone">
+								<el-input v-model="ruleForm.cdfPhone" placeholder="客户联系方式" type="age"></el-input>
+							</el-form-item><br />
+							<el-form-item label="客户类型" prop="cdfIsvip">
+								<el-select v-model="ruleForm.cdfIsvip" placeholder="请选择" @change="Showx">
+									<el-option label="普通" :value=0>
+										普通
+									</el-option>
+									<el-option label="会员" :value=1>
+										会员
+									</el-option>
+								</el-select>
+							</el-form-item>
+
+							<el-form-item label="性别" prop="cdfSex">
+								<el-radio-group v-model="ruleForm.cdfSex">
+									<el-radio :label=1>男</el-radio>
+									<el-radio :label=0>女</el-radio>
+								</el-radio-group>
+							</el-form-item><br />
+
+							<div v-show="showVip">
+								<el-form-item label="会员卡号" prop="cdfVipaccount">
+									<el-input v-model="ruleForm.cdfVipaccount" placeholder="请输入会员卡号" :disabled="true"></el-input>
+								</el-form-item>
+								<el-form-item label="充值金额" prop="cdfVipmoney">
+									<el-input v-model="ruleForm.cdfVipmoney" placeholder="请输入充值金额"></el-input>
+								</el-form-item>
+							</div>
+
+						</el-form>
+
+						<el-form ref="form" :model="form" label-width="100px" style="margin-left: -30px;">
+							<el-form-item label="地区：">
+								<el-cascader :options="CityInfo" v-model="form.selectedOptions" :change-on-select="true" :clearable="true" :filterable="true" @change="handleChange" style="margin-left: 10px;">
+								</el-cascader>
+								<h6 style="margin-left:20px ;">
+									<span>所选区域：</span>
+									<div>
+										<textarea id="assd" readonly="readonly" cols="35" >{{form.city | myAddressCity}}{{form.erae | myAddressErae}}{{form.minerae | myAddressMinerae}}</textarea>
+									</div>
+								</h6>
+							</el-form-item>
+
+							<el-form-item label="详细地址">
+								<el-input style="width: 42%;" placeholder="详细地址" v-model="xiangx" :disabled="ClientXX"></el-input>
+							</el-form-item>
+
+							<el-form-item>
+								<!--<el-button type="primary" @click="addClientdata">立即创建</el-button>
+								<el-button @click="">重置</el-button>-->
+							</el-form-item>
+						</el-form>
+					</el-tab-pane>
+
+					<el-tab-pane label="客户车辆" name="second">
+						<el-form :label-position="labelPosition" :inline="true" :model="ruleFormCat" :rules="rulesCat" ref="ruleFormCat" label-width="100px" class="demo-ruleForm">
+							<el-form-item label="客户编号">
+								<el-input v-model="ruleForm.cdfNumber" :disabled="true"></el-input>
+							</el-form-item>
+							<el-form-item label="车辆车牌" prop="vdfPlatenum">
+								<el-input v-model="ruleFormCat.vdfPlatenum"></el-input>
+							</el-form-item>
+							<el-form-item label="车辆品牌" prop="vdfBrand">
+								<el-select v-model="ruleFormCat.vdfBrand" placeholder="请选择车辆品牌" @change="queryCatType()">
+									<el-option v-for="(i,index) in brandListAddPage" :label="i.brandName" :value="i.brandId"></el-option>
+								</el-select>
+							</el-form-item>
+							<el-form-item label="车辆型号" prop="vdfType">
+								<el-select v-model="ruleFormCat.vdfType" placeholder="请选择车辆型号">
+									<el-option v-for="(i,index) in catTypeListAddPage" :label="i.modeltypeName" :value="i.modeltypeId"></el-option>
+								</el-select>
+							</el-form-item>
+							<el-form-item label="车辆产地" prop="vdfPlace">
+								<el-input v-model="ruleFormCat.vdfPlace" placeholder="请输入车辆产地"></el-input>
+							</el-form-item>
+							<el-form-item label="车辆颜色" prop="vdfColor">
+								<el-input v-model="ruleFormCat.vdfColor" placeholder="请选择车辆颜色"></el-input>
+							</el-form-item>
+							<el-form-item style="margin-left: 35%;">
+								<!--<el-button type="primary" @click="submitForm('ruleFormCat')">添加</el-button>-->
+								<!--<el-button @click="resetForm('ruleFormCat')">重置</el-button>-->
+							</el-form-item>
+						</el-form>
+					</el-tab-pane>
+				</el-tabs>
+				<el-button type="primary" @click="clientAndCatAdd('ruleFormCat')" style="margin-left: 35%;">提交数据</el-button>
+			</template>
+		</div>
+	</body>
+	<!--<script type="text/javascript" src="../../js/jquery-1.12.4.js"></script>
+
+	<script type="text/javascript" src="../../js/vue.js"></script>
+	<script type="text/javascript" src="../../js/axios.min.js"></script>
+	<script type="text/javascript" src="../../js/axios_cfg.js"></script>
+	<script type="text/javascript" src="../../js/index.js"></script>-->
+
+	<script type="text/javascript">
+		var _clientAddthis;
+		var myVuevm = new Vue({
+			el: "#myVue",
+			data: {
+				ClientXX: false,
+				xiangx: "",
+				/*数据源*/
+				CityInfo: CityInfo, //地区数据
+				form: {
+					city: '',
+					erae: '',
+					minerae: '',
+					selectedOptions: [], //地区筛选数组
+
+				},
+
+				ruleForm: {
+					cdfNumber: "",
+					cdfName: '',
+					cdfPhone: '',
+					cdfSex: 1,
+					cdfVipaccount: "",
+					cdfAddress: "",
+					cdfIsvip: 0,
+					cdfVipmoney: 0,
+					cdfVippass: "123456",
+					cdfCreator: "hxy",
+					cdfRemove: 0,
+					cdfDate: new Date(),
+					cdfVipfen: 0,
+				},
+				rules: {
+					cdfName: [{
+							required: true,
+							message: '请输入客户名称',
+							trigger: 'blur'
+						},
+						{
+							min: 2,
+							max: 30,
+							message: '长度在 2 到 30 个字符',
+							trigger: 'blur'
+						}
+					],
+					cdfIsvip: [{
+						required: true,
+						message: '请选择活动区域',
+						trigger: 'change'
+					}],
+					cdfPhone: [{
+							required: true,
+							message: '请输入联系方式',
+							trigger: 'blur'
+						},
+						{
+							min: 11,
+							max: 11,
+							message: '长度必须11个数字',
+							trigger: 'blur'
+						},
+
+					],
+					cdfSex: [{
+						required: true,
+						message: '请填写性别',
+						trigger: 'blur'
+					}],
+
+				},
+
+				//显示会员的卡号文本框
+				showVip: false,
+
+				//默认选中客户资料
+				activeNameAddPage: "firstAddPage",
+
+				//车辆的对齐方式
+				labelPosition: "right",
+				//车辆的数据
+				ruleFormCat: {
+					vdfVin: '',
+					vdfPlatenum: '',
+					vdfBrand: 2,
+					vdfType: '',
+					vdfCdfnum: "",
+					vdfCreator: "hxy",
+					vdfDate: new Date(),
+					vdfRemove: 0,
+				},
+				rulesCat: {
+					vdfPlatenum: [{
+							required: true,
+							message: '请输入车牌',
+							trigger: 'blur'
+						},
+						{
+							min: 7,
+							max: 7,
+							message: '正确输入车牌',
+							trigger: 'blur'
+						}
+					],
+					vdfBrand: [{
+						required: true,
+						message: '请选择车辆品牌',
+						trigger: 'change'
+					}],
+					vdfType: [{
+						required: true,
+						message: '请选择车辆型号',
+						trigger: 'change'
+					}],
+
+				},
+
+				//车辆品牌数组
+				brandListAddPage: [],
+				//车辆类型数组
+				catTypeListAddPage: [],
+
+				//VIP消费纪录对象
+				vipConsume: {
+					vipciAccount: "",
+					vipciName: "",
+					vipciXftype: "充值",
+					vipciUpmoeny: "",
+					vipciFktype: "付现",
+					vipciCreator: "hxy",
+					vipciDate: new Date(),
+					vipciRemove: 0,
+				},
+			},
+
+			mounted() {
+				_clientAddthis = this;
+				//生成客户编号
+				_clientAddthis.orderVipnum();
+				//查询车辆品牌
+				_clientAddthis.queryCatBrand();
+				//查询车辆型号
+				_clientAddthis.queryCatType();
+
+			},
+			methods: {
+				//显示Vip
+				Showx() {
+					if(_clientAddthis.ruleForm.cdfIsvip == 1) {
+
+						_clientAddthis.showVip = true
+					} else {
+						_clientAddthis.showVip = false
+					}
+				},
+
+				//新增客户资料
+				addClientdata() {
+					var a = $("#assd").text()
+					_clientAddthis.ruleForm.cdfAddress = a + _clientAddthis.xiangx;
+
+					if(_clientAddthis.ruleForm.cdfVipmoney < 0) {
+						_clientAddthis.$message('充值金额不能小于0');
+						return
+					}
+					//算积分
+					_clientAddthis.ruleForm.cdfVipfen = _clientAddthis.ruleForm.cdfVipmoney / 100;
+					axios({
+						url: "http://localhost:8080/api/Hxy/ClientdatainfoAction/addClientdata",
+						method: "post",
+						data: _clientAddthis.ruleForm
+
+					}).then(function(result) {
+						console.info(result.data);
+						if(result.data.code == 200) {
+							_clientAddthis.$message(result.data.msg);
+							//location.href = "Dzw_clientData.html";
+							//							clientDataVm.handleClose();
+							//							clientDataVm.clientAddpageinfo(1,2);
+						} else {
+							_clientAddthis.$message(result.data.msg);
+						}
+					})
+
+				},
+
+				//vip编号
+				orderVipnum() {
+					var date = new Date();
+					var month = (date.getMonth() + 1).toString();
+					var curDate = date.getDate().toString();
+					var curHours = date.getHours().toString();
+					var curMinutes = date.getMinutes().toString();
+					var curSeconds = date.getSeconds().toString();
+					var curMill = date.getMilliseconds().toString();
+
+					if(month >= 1 && month <= 9) {
+						month = "0" + month;
+					}
+					if(curDate >= 0 && curDate <= 9) {
+						curDate = "0" + curDate;
+					}
+					if(curHours >= 0 && curHours <= 9) {
+						curHours = "0" + curHours;
+					}
+					if(curMinutes >= 0 && curMinutes <= 9) {
+						curMinutes = "0" + curMinutes;
+					}
+					if(curSeconds >= 0 && curSeconds <= 9) {
+						curSeconds = "0" + curSeconds;
+					}
+					if(curMill >= 0 && curMill <= 9) {
+						curMill = "0" + curMill;
+					}
+
+					var currentdate = date.getFullYear().toString() + month + curDate +
+						curHours + curMinutes +
+						curSeconds + curMill;
+					//					var currentdate =
+					//						curHours  + curMinutes  + curSeconds;
+					_clientAddthis.ruleForm.cdfNumber = currentdate;
+					_clientAddthis.ruleForm.cdfVipaccount = currentdate;
+
+				},
+
+				//车辆资料验证
+				submitForm(formName) {
+					this.$refs[formName].validate((valid) => {
+						if(valid) {
+							//车架号
+							var _vin = Math.random().toString(36).substr(2).toUpperCase();
+							_clientAddthis.ruleFormCat.vdfVin = "LVSFG" + _vin;
+							//客户编号
+							_clientAddthis.ruleFormCat.vdfCdfnum = _clientAddthis.ruleForm.cdfNumber;
+
+							axios({
+								url: "http://localhost:8080/api/Hxy/VehicledatainfoAction/addClientCat",
+								method: "post",
+								data: _clientAddthis.ruleFormCat,
+
+							}).then(function(result) {
+								console.info(result.data);
+								if(result.data.code == 200) {
+									_clientAddthis.$message(result.data.msg);
+									//location.href = "Dzw_clientData.html";
+									//							clientDataVm.handleClose();
+									clientDataVm.clientAddpageinfo(1, 2);
+								} else {
+									_clientAddthis.$message(result.data.msg);
+								}
+
+							})
+						} else {
+							console.log('error submit!!');
+							return false;
+						}
+					});
+				},
+
+				//车辆重置
+				resetForm(formName) {
+					this.$refs[formName].resetFields();
+				},
+
+				//查询车辆品牌
+				queryCatBrand() {
+					axios({
+						url: "http://localhost:8080/api/Hxy/BrandAction/queryCatBrand",
+						method: "get",
+						params: {
+
+						}
+
+					}).then(function(result) {
+						console.info(result.data);
+						_clientAddthis.brandListAddPage = result.data;
+					})
+				},
+				//查询车辆型号
+				queryCatType() {
+					axios({
+						url: "http://localhost:8080/api/Hxy/ModeltypeAction/queryCatType",
+						method: "get",
+						params: {
+							vehicleId: _clientAddthis.ruleFormCat.vdfBrand,
+						}
+					}).then(function(result) {
+
+						console.info(result.data);
+						_clientAddthis.catTypeListAddPage = result.data;
+						_clientAddthis.ruleFormCat.vdfType = _clientAddthis.catTypeListAddPage[0].modeltypeId
+
+					})
+				},
+
+				//新增客户车辆
+				addClientCat() {
+					//车架号
+					var _vin = Math.random().toString(36).substr(2).toUpperCase();
+					_clientAddthis.ruleFormCat.vdfVin = "LVSFG" + _vin;
+					//客户编号
+					_clientAddthis.ruleFormCat.vdfCdfnum = _clientAddthis.ruleForm.cdfNumber;
+
+					axios({
+						url: "http://localhost:8080/api/Hxy/VehicledatainfoAction/addClientCat",
+						method: "post",
+						data: _clientAddthis.ruleFormCat,
+
+					}).then(function(result) {
+						console.info(result.data);
+						if(result.data.code == 200) {
+							_clientAddthis.$message(result.data.msg);
+							//location.href = "Dzw_clientData.html";
+							//							clientDataVm.handleClose();
+							clientDataVm.clientAddpageinfo(1, 2);
+						} else {
+							_clientAddthis.$message(result.data.msg);
+						}
+
+					})
+
+				},
+
+				//新增VIP消费记录表
+				addVIPconsumeinfo() {
+					axios({
+						url: "http://localhost:8080/api/Hxy/VipconsumeinfoAction/addVIPconsumeinfo",
+						method: "post",
+						data: _clientAddthis.vipConsume,
+
+					}).then(function(result) {
+						console.info(result.data);
+						if(result.data.code == 200) {
+							_clientAddthis.$message(result.data.msg);
+						} else {
+							_clientAddthis.$message(result.data.msg);
+						}
+					})
+				},
+
+				//两个表一起新增
+				clientAndCatAdd(formName) {
+					if(_clientAddthis.ruleForm.cdfName != "") {
+						if(_clientAddthis.ruleForm.cdfPhone != "") {
+							if(_clientAddthis.ruleForm.cdfVipmoney >= 0) {
+								//新增用户
+								_clientAddthis.addClientdata();
+								if(_clientAddthis.ruleFormCat.vdfPlatenum.trim() != "") {
+									//新增车辆
+									_clientAddthis.submitForm(formName);
+
+								}
+								//判断VIP充值金额是否大于0
+								if(_clientAddthis.ruleForm.cdfVipmoney > 0) {
+									_clientAddthis.vipConsume.vipciAccount = _clientAddthis.ruleForm.cdfVipaccount;
+									_clientAddthis.vipConsume.vipciName = _clientAddthis.ruleForm.cdfName;
+									_clientAddthis.vipConsume.vipciUpmoeny = _clientAddthis.ruleForm.cdfVipmoney;
+									//新增充值记录
+									_clientAddthis.addVIPconsumeinfo();
+								}
+								location.href = "Dzw_clientData.html";
+							} else {
+								_clientAddthis.$message("充值金额不能小于0");
+							}
+						} else {
+							_clientAddthis.$message("客户电话不能为空");
+						}
+
+					} else {
+						_clientAddthis.$message("客户姓名不能为空");
+					}
+
+				},
+
+				handleChange(value) {
+					this.form.city = this.form.selectedOptions[0];
+					this.form.erae = this.form.selectedOptions[1]
+					this.form.minerae = this.form.selectedOptions[2]
+				},
+
+			},
+
+			/*金额过滤器*/
+			filters: {
+				myAddressCity: function(value) {
+					for(y in this.CityInfo) {
+						if(this.CityInfo[y].value == value) {
+							return value = this.CityInfo[y].label
+						}
+					}
+				},
+				myAddressErae: function(value) {
+					for(y in this.CityInfo) {
+						for(z in this.CityInfo[y].children) {
+							if(this.CityInfo[y].children[z].value == value && value != undefined) {
+								return value = this.CityInfo[y].children[z].label;
+							}
+						}
+					}
+				},
+				myAddressMinerae: function(value) {
+					for(y in this.CityInfo) {
+						for(z in this.CityInfo[y].children) {
+							for(i in this.CityInfo[y].children[z].children) {
+								if(this.CityInfo[y].children[z].children[i].value == value && value != undefined) {
+									return value = this.CityInfo[y].children[z].children[i].label
+								}
+							}
+						}
+					}
+				}
+
+			},
+
+		});
+	</script>
+
+</html>

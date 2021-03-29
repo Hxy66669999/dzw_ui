@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<link rel="stylesheet" href="../../css/index.css" />
+	</head>
+	
+	<body>
+		<div id="add" style="margin-left: 750px;">
+				<el-form label-width="100px">
+				<el-form-item label="厂商编号">
+					<el-input v-model="firmnoid"  style="width: 130px;"></el-input>
+				</el-form-item>
+				<el-form-item label="厂商名称">
+					<el-input v-model="firmnoname" style="width: 150px;"></el-input>
+				</el-form-item>
+				<el-form-item label="厂商地址">
+					<el-input v-model="firmnoaddress" style="width: 150px;"></el-input>
+				</el-form-item>
+				<el-form-item label="公司电话">
+					<el-input v-model="firmnophone" style="width: 150px;"></el-input>
+				</el-form-item>
+				<el-form-item label="联系人">
+					<el-input v-model="firmnolxr" style="width: 130px;"></el-input>
+				</el-form-item>
+				<el-form-item label="联系人电话">
+					<el-input v-model="firmnolxrphone" style="width: 150px;"></el-input>
+				</el-form-item>
+				<el-form-item label="供货备注">
+					<el-input v-model="firmnofirmsevenst" style="width: 150px;"></el-input>
+				</el-form-item>
+				<el-form-item size="large">
+					<el-button type="primary" @click="onSubmitADD">立即创建</el-button>
+					<el-button>取消</el-button>
+				</el-form-item>
+			</el-form>
+		</div>
+	</body>
+	<script type="text/javascript" src="../../js/jquery-1.12.4.js"></script>
+	<script type="text/javascript" src="../../js/vue.js"></script>
+	<script type="text/javascript" src="../../js/axios.min.js"></script>
+	<script type="text/javascript" src="../../js/axios_cfg.js"></script>
+	<script type="text/javascript" src="../../js/index.js"></script>
+	<script>
+		var _this;
+		var app = new Vue({
+			el: "#add",
+			data: {
+				
+				firmnoid: null,
+				firmnoname: null,
+				firmnoaddress: null,
+				firmnophone: null,
+				firmnolxr: null,
+				firmnolxrphone: null,
+				firmnofirmsevenst: null,
+			},
+
+			methods: { //方法的集合
+				//新增厂商
+				onSubmitADD:function(){
+					var id = sessionStorage.getItem("firmnoid"); 
+					axios({
+						method: "post",
+						url: "http://127.0.0.1:8080/api/persons/lyw/Firmnoaction/basedontheIDADD",
+						data:{
+								firmnoname:_this.firmnoname, 
+								firmnoaddress:_this.firmnoaddress, 
+								firmnophone:_this.firmnophone, 
+								firmnolxr:_this.firmnolxr, 
+								firmnolxrphone:_this.firmnolxrphone, 
+								firmnofirmsevenst:_this.firmnofirmsevenst, 
+								firmnocreator:_this.firmnocreator, 
+						}
+
+					}).then(response => {
+						var api = response.data
+						console.log(api)
+						if(api.code == 200) {
+								location.href="../lyw/firmno.html"
+								
+							
+						}
+
+					})
+				}
+			
+			
+				
+			},
+			mounted() {
+				_this = this;
+			
+			}
+
+		});
+	</script>
+</html>

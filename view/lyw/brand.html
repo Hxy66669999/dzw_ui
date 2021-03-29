@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<link rel="stylesheet" href="../../css/index.css" />
+	</head>
+
+	<body>
+		<div id="modeltype">
+
+			<el-container style="margin-left: 650px;">
+				<el-header>
+					<el-row :gutter="20">
+						<el-col :span="6">
+							<div class="grid-content bg-purple">
+								<el-input placeholder="请输入品牌名称" style="width: 250px;"  v-model="brandname"></el-input>
+							</div>
+						</el-col>
+						<el-col :span="5">
+							<div class="grid-content bg-purple">
+								<el-button icon="el-icon-search" circle @click="demand()"></el-button>
+							</div>
+						</el-col>
+						<el-col :span="2">
+							<div class="grid-content bg-purple">
+								<el-button icon="el-icon-circle-plus-outline" @click="xinzenglyw">新增</el-button>
+							</div>
+						</el-col>
+
+					</el-row>
+
+				</el-header>
+				<el-main>
+					<template>
+						<el-table :data="tableDataQuerybrand" border style="width: 640px" max-height="450px">
+							<el-table-column prop="brandid" label="id" width="200">
+							</el-table-column>
+							<el-table-column prop="brandname" label="品牌名称" width="200">
+							</el-table-column>
+
+							<el-table-column label="地址" width="180">
+								<template slot-scope="scope">
+									<el-button size="mini" type="danger" icon="el-icon-edit" @click="">修改</el-button>
+									<el-button type="danger" icon="el-icon-delete" circle @click="Deletebrand(scope.row.brandid)"></el-button>
+								</template>
+							</el-table-column>
+						</el-table>
+					</template>
+				</el-main>
+				<el-footer>
+					<div class="block" style="margin-left: 200px;">
+						<el-pagination layout="prev, pager, next" :total="50">
+						</el-pagination>
+					</div>
+				</el-footer>
+			</el-container>
+			
+			
+				<el-dialog @opened="handlerOpen4" :before-close="handleClose4" :visible.sync="dialogVisible4" title="当前页面模态框" width="100%" center>
+				<div id="cnt">
+
+				</div>
+				<span slot="footer" class="dialog-footer">
+	    			<el-button @click="dialogVisible1=false">取 消</el-button>
+	    			<el-button type="primary">确 定</el-button>
+  				</span>
+			</el-dialog>
+			
+
+		</div>
+
+	</body>
+	<script type="text/javascript" src="../../js/jquery-1.12.4.js"></script>
+	<script type="text/javascript" src="../../js/vue.js"></script>
+	<script type="text/javascript" src="../../js/axios.min.js"></script>
+	<script type="text/javascript" src="../../js/axios_cfg.js"></script>
+	<script type="text/javascript" src="../../js/index.js"></script>
+	<script>
+		var _this;
+		var app = new Vue({
+			el: "#modeltype",
+			data: {
+				tableDataQuerybrand: [],
+				brandname:null,
+				dialogVisible4:false
+			},
+
+			methods: { //方法的集合
+					
+					//第四个模态框
+				handlerOpen4() {
+					$("#cnt").load('dzw_brandAdd.html');
+				},
+				//第四个模态框
+				handleClose4(done) {
+					this.$confirm('是否退出?', '提示', {
+						confirmButtonText: '确定',
+						cancelButtonText: '取消',
+						type: 'warning'
+					}).then(() => {
+						done(); //关闭	
+					}).catch(() => {
+
+					});
+
+				},
+				/*进来查询品牌*/
+				Querybrand: function() {
+					axios({
+						method: "get",
+						url: "http://127.0.0.1:8080/api/persons/lyw/Brandaction/Querybrand1",
+					}).then(response => {
+						console.log(response)
+						var api = response.data
+						if(api.code == 200) {
+							_this.tableDataQuerybrand = api.data;
+
+						}
+
+					})
+				},
+				//搜索查询
+					demand:function(){
+							
+						axios({
+						method: "get",
+						url: "http://127.0.0.1:8080/api/persons/lyw/Brandaction/condition/"+_this.brandname,
+					}).then(response => {
+						console.log(response)
+						var api = response.data
+						if(api.code == 200) {
+							_this.tableDataQuerybrand = api.data;
+
+						}
+
+					})
+				},
+				
+				Deletebrand:function(id){
+					axios({
+						method: "get",
+						url: "http://127.0.0.1:8080/api/persons/lyw/Brandaction/coDeletebrand/"+id,
+					}).then(response => {
+						console.log(response)
+						var api = response.data
+						if(api.code == 200) {
+							_this.tableDataQuerybrand = api.data;
+
+						}
+
+					})
+				},
+				xinzenglyw:function(){
+					_this.dialogVisible4=true
+					
+				}
+			},
+			mounted() {
+				_this = this;
+				_this.Querybrand();
+
+			}
+
+		});
+	</script>
+
+</html>

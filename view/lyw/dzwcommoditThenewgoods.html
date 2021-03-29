@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<link rel="stylesheet" href="../../css/index.css" />
+	</head>
+
+	<body>
+		<div id="app3">
+			<el-form  label-width="800px">
+				<el-form-item label="商品名称">
+					<el-input v-model="shopbrand" style="width: 150px;"></el-input>
+				</el-form-item>
+				<el-form-item label="是否下架">
+					<el-select v-model="value" placeholder="请选择">
+						<el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
+						</el-option>
+					</el-select>
+				</el-form-item>
+				<el-form-item label="厂商名称">
+					<el-select v-model="value1" placeholder="请选择">
+						<el-option v-for="item in options2" :key="item.firmnoid" :label="item.firmnoname" :value="item.firmnoid">
+						</el-option>
+					</el-select>
+				</el-form-item>
+				<el-form-item label="商品类型名称">
+					<el-select v-model="value2" placeholder="请选择">
+						<el-option v-for="item in options1" :key="item.goodsTypeid" :label="item.goodsTypename" :value="item.goodsTypeid">
+						</el-option>
+					</el-select>
+				</el-form-item>
+				<el-form-item label="商品品牌">
+					<el-select v-model="value3" placeholder="请选择">
+						<el-option v-for="item in options3" :key="item.commodityid" :label="item.commodityname" :value="item.commodityid">
+						</el-option>
+					</el-select>
+				</el-form-item>
+				<el-form-item label="商品重量">
+					<el-input v-model="shopweight" style="width: 350px;"></el-input>
+				</el-form-item>
+				<el-form-item label="商品进货价">
+					<el-input v-model="shopprice" style="width: 350px;"></el-input>
+				</el-form-item>
+				<el-form-item label="商品标准价">
+					<el-input v-model="shopbjmoney" style="width: 350px;"></el-input>
+				</el-form-item>
+				<el-form-item label="商品会员价">
+					<el-input v-model="shophymoney" style="width: 350px;"></el-input>
+				</el-form-item>
+				<el-form-item label="商品会Vip价">
+					<el-input v-model="shopvipmoney" style="width: 350px;"></el-input>
+				</el-form-item>
+				<el-form-item label="商品协议价">
+					<el-input v-model="shoprxyprice" style="width: 350px;"></el-input>
+				</el-form-item>
+				<el-form-item>
+					<el-button type="primary" @click="found()">立即创建</el-button>
+					<el-button>取消</el-button>
+				</el-form-item>
+			</el-form>
+		</div>
+	</body>
+	<script type="text/javascript" src="../../js/jquery-1.12.4.js"></script>
+	<script type="text/javascript" src="../../js/vue.js"></script>
+	<script type="text/javascript" src="../../js/axios.min.js"></script>
+	<script type="text/javascript" src="../../js/axios_cfg.js"></script>
+	<script type="text/javascript" src="../../js/index.js"></script>
+	<script>
+		var _this;
+		var app = new Vue({
+			el: "#app3",
+			data: {
+					
+					shopid:'',
+					shopbrand: null,
+					shopweight:null,
+					shopprice:null,
+					shopbjmoney:null,
+					shophymoney:null,
+					shopvipmoney:null,
+					shoprxyprice:null,
+					options1: [{
+						value: '',
+						label: null
+					}],
+					options: [{
+						value:0,
+						label:"上架"
+					},{
+						value:1,
+						label:"不上架"
+					}],
+					options2: [{
+						value:'',
+						label:null
+					}],
+					options3: [{
+						value:'',
+						label:null
+					}],
+					value: '',
+					value1:'',
+					value2:'',
+					value3:'',
+					
+			},
+
+			methods: { //方法的集合
+					
+				Query:function(){
+						var id = sessionStorage.getItem("Modifythegoodsid"); 
+						axios({
+						method: "get",
+						url: "http://127.0.0.1:8080/api/persons/lyw/data1/Query/"+id,
+						
+					}).then(response => {
+						 	var api = response.data
+						 	if(api.code==200){
+						 		console.log(api.data)
+						 		
+							 		for (var i=0;i<api.data.length;i++) {
+								
+									_this.shopid=api.data[i].shopid;
+									_this.shopbrand=api.data[i].shopbrand;
+									_this.shopweight=api.data[i].shopweight;
+									_this.shopprice=api.data[i].shopprice;
+								
+									_this.shopbjmoney=api.data[i].shopbjmoney;
+									_this.shophymoney=api.data[i].shophymoney;
+									_this.shopvipmoney=api.data[i].shopvipmoney;
+									_this.shoprxyprice=api.data[i].shoprxyprice;
+								}
+						 	}
+						
+					})
+				},
+				
+			//查询商品类型
+				Query1:function(){
+						
+						axios({
+						method: "get",
+						url: "http://127.0.0.1:8080/api/persons/lyw/Query",
+						
+					}).then(response => {
+						 	var api = response.data
+						 	if(api.code==200){
+						 		/*_this.form =api.data;*/
+						 		_this.options1=	api.data;
+						 		/*console.log(api.data)*/
+							 	/*	for (var i=0;i<api.data.length;i++) {
+									_this.options1[i].value=api.data[i].goodsTypeid;
+									_this.options1[i].label=api.data[i].goodsTypename;
+									
+								}*/
+						 	}
+						
+					})
+				},
+				//查询厂商编号
+				Query2:function(){
+						
+						axios({
+						method: "get",
+						url: "http://127.0.0.1:8080/api/persons/lyw/Firmnoaction/Firmnoaction1",
+						
+					}).then(response => {
+						 	var api = response.data
+						 	if(api.code==200){
+						 		/*_this.form =api.data;*/
+						 		_this.options2 = api.data;
+						 		console.log(api.data)
+							 		/*for (var i=0;i<api.data.length;i++) {
+									_this.options2[i].value=api.data[i].firmnoid;
+									_this.options2[i].label=api.data[i].firmnoname;
+									
+								}*/
+						 	}
+						
+					})
+				},
+				//查询商品品牌
+				Query3:function(){
+						
+						axios({
+						method: "get",
+						url: "http://127.0.0.1:8080/api/persons/lyw/Commodityaction/Querythebrand",
+						
+					}).then(response => {
+						 	var api = response.data
+						 	if(api.code==200){
+						 		/*_this.form =api.data;*/
+						 		_this.options3 = api.data;
+						 		/*console.log(api.data)*/
+							 	
+						 	}
+						
+					})
+				},
+				found:function(){
+					/*alert(_this.value);
+					alert(_this.value3);
+					alert(_this.value1);*/
+					var id = sessionStorage.getItem("Modifythegoodsid"); 
+					axios({
+						method: "post",
+						url: "http://127.0.0.1:8080/api/persons/lyw/data1/Goodschange",
+						data:{
+							shopid:id,
+							firmnoid:_this.value1,
+							stateid:_this.value,
+							goodsTypeid:_this.value2,
+							commodityid:_this.value3,
+							shopbrand:_this.shopbrand,
+							shopweight:_this.shopweight,
+							shopprice:_this.shopprice,
+							shopbjmoney:_this.shopbjmoney,
+							shophymoney:_this.shophymoney,
+							shopvipmoney:_this.shopvipmoney,
+							shoprxyprice:_this.shoprxyprice,
+						}
+						
+					}).then(response => {
+						 	var api = response.data
+						 	if(api.code==200){
+						 		/*_this.form =api.data;*/
+						 		/*_this.options3 = api.data;*/
+						 		/*console.log(api.data)*/
+							 	location.href="../lyw/dzw_commodity.html"
+						 	}
+						
+					})
+					
+				}
+			},
+			mounted() {
+				_this = this;
+				_this.Query();
+				_this.Query1();
+				_this.Query2();
+				_this.Query3();
+			}
+
+		});
+	</script>
+
+</html>

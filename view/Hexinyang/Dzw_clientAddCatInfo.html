@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<link rel="stylesheet" type="text/css" href="../../css/index.css" />
+	</head>
+
+	<body>
+		<div id="clientAddCatInfoApp">
+			<el-form :label-position="labelPosition" :inline="true" :model="CatAddCatInfo1" :rules="rulesCatAddCatInfo" ref="ruleFormAddCatInfo" label-width="100px" class="demo-ruleForm">
+				<el-form-item label="客户编号">
+					<el-input v-model="CatAddCatInfo1.vdfCdfnum" :disabled="true"></el-input>
+				</el-form-item>
+				<el-form-item label="车辆车牌" prop="vdfPlatenum">
+					<el-input v-model="CatAddCatInfo1.vdfPlatenum"></el-input>
+				</el-form-item>
+				<el-form-item label="车辆品牌" prop="vdfBrand">
+					<el-select v-model="CatAddCatInfo1.vdfBrand" placeholder="请选择车辆品牌" @change="queryCatTypeAddCatInfo()">
+						<el-option v-for="(i,index) in brandListAddPageAddCatInfo" :label="i.brandName" :value="i.brandId"></el-option>
+					</el-select>
+				</el-form-item>
+				<el-form-item label="车辆型号" prop="vdfType">
+					<el-select v-model="CatAddCatInfo1.vdfType" placeholder="请选择车辆型号">
+						<el-option v-for="(i,index) in catTypeListAddPageAddCatInfo" :label="i.modeltypeName" :value="i.modeltypeId"></el-option>
+					</el-select>
+				</el-form-item>
+				<el-form-item label="车辆产地" prop="vdfPlace">
+					<el-input v-model="CatAddCatInfo1.vdfPlace" placeholder="请输入车辆产地"></el-input>
+				</el-form-item>
+				<el-form-item label="车辆颜色" prop="vdfColor">
+					<el-input v-model="CatAddCatInfo1.vdfColor" placeholder="请选择车辆颜色"></el-input>
+				</el-form-item>
+				<el-form-item style="margin-left: 35%;">
+					<el-button type="primary" @click="submitForm('ruleFormAddCatInfo')">添加</el-button>
+					<!--<el-button @click="resetForm('ruleFormCat')">重置</el-button>-->
+				</el-form-item>
+			</el-form>
+		</div>
+	</body>
+	<script type="text/javascript">
+		var _clientAddCatInfoThis;
+		var clientAddCatInfoMv = new Vue({
+			el: "#clientAddCatInfoApp",
+			data: {
+				//车辆的对齐方式
+				labelPosition: "right",
+				//车辆的数据
+				CatAddCatInfo1: {
+					vdfVin: '',
+					vdfPlatenum: '',
+					vdfBrand: 2,
+					vdfType: '',
+					vdfCdfnum: "",
+					vdfCreator: "hxy",
+					vdfDate: new Date(),
+					vdfRemove: 0,
+				},
+				rulesCatAddCatInfo: {
+					vdfPlatenum: [{
+							required: true,
+							message: '请输入车牌',
+							trigger: 'blur'
+						},
+						{
+							min: 7,
+							max: 7,
+							message: '正确输入车牌',
+							trigger: 'blur'
+						}
+					],
+					vdfBrand: [{
+						required: true,
+						message: '请选择车辆品牌',
+						trigger: 'change'
+					}],
+					vdfType: [{
+						required: true,
+						message: '请选择车辆型号',
+						trigger: 'change'
+					}],
+
+				},
+
+				//车辆品牌数组
+				brandListAddPageAddCatInfo: [],
+				//车辆类型数组
+				catTypeListAddPageAddCatInfo: [],
+			},
+			methods: {
+				//查询车辆品牌
+				queryCatBrandAddCatInfo() {
+					axios({
+						url: "http://localhost:8080/api/Hxy/BrandAction/queryCatBrand",
+						method: "get",
+						params: {
+
+						}
+
+					}).then(function(result) {
+						console.info(result.data);
+						_clientAddCatInfoThis.brandListAddPageAddCatInfo = result.data;
+					})
+				},
+				//查询车辆型号
+				queryCatTypeAddCatInfo() {
+					axios({
+						url: "http://localhost:8080/api/Hxy/ModeltypeAction/queryCatType",
+						method: "get",
+						params: {
+							vehicleId: _clientAddCatInfoThis.CatAddCatInfo1.vdfBrand,
+						}
+					}).then(function(result) {
+						console.info(result.data);
+						_clientAddCatInfoThis.catTypeListAddPageAddCatInfo = result.data;
+						_clientAddCatInfoThis.CatAddCatInfo1.vdfType = _clientAddCatInfoThis.catTypeListAddPageAddCatInfo[0].modeltypeId
+
+					})
+				},
+
+				//车辆资料验证
+				submitForm(formName) {
+					this.$refs[formName].validate((valid) => {
+						if(valid) {
+							//车架号
+							var _vin = Math.random().toString(36).substr(2).toUpperCase();
+							_clientAddCatInfoThis.CatAddCatInfo1.vdfVin = "LVSFG" + _vin;
+					
+							axios({
+								url: "http://localhost:8080/api/Hxy/VehicledatainfoAction/addClientCat",
+								method: "post",
+								data: _clientAddCatInfoThis.CatAddCatInfo1,
+
+							}).then(function(result) {
+								console.info(result.data);
+								if(result.data.code == 200) {
+									_clientAddCatInfoThis.$message(result.data.msg);
+									location.href = "Dzw_clientData.html";
+									//							clientDataVm.handleClose();
+									clientDataVm.clientAddpageinfo(1, 2);
+								} else {
+									_clientAddCatInfoThis.$message(result.data.msg);
+								}
+
+							})
+						} else {
+							console.log('error submit!!');
+							return false;
+						}
+					});
+				},
+			},
+			mounted() {
+				_clientAddCatInfoThis = this;
+				_clientAddCatInfoThis.queryCatBrandAddCatInfo();
+				_clientAddCatInfoThis.queryCatTypeAddCatInfo();
+				//客户编号
+				_clientAddCatInfoThis.CatAddCatInfo1.vdfCdfnum = localStorage.getItem("cdfNumber");
+			}
+		})
+	</script>
+
+</html>

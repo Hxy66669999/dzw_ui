@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<link rel="stylesheet" href="../../css/index.css" />
+
+	</head>
+
+	<body>
+		<div id="app">
+			<el-container   v-loading="loading">
+				
+				<el-aside width="600px" style="max-height:385px; margin-top: 80px;">
+					<!--最左边-->
+						<el-row :gutter="20">
+							<el-col :span="15">
+								<div class="grid-content bg-purple">
+									<el-input placeholder="请输入内容"  v-model="goodsTypename"  style="width: 250px;"></el-input>
+								</div>
+							</el-col>
+							<el-col :span="2">
+								<div class="grid-content bg-purple">
+									<el-button icon="el-icon-search" circle  @click="search"></el-button>
+								</div>
+							</el-col>
+							
+						</el-row>
+
+					
+					<template >
+						<el-table :data="tableData" style="width: 650px;" max-height="800px">
+							<el-table-column label="类型名称" width="130">
+								<template slot-scope="scope">
+									<i class="el-icon-time"></i>
+									<span style="margin-left: 10px" @click="dianji(scope.$index,scope.row.goodsTypeid)">{{ scope.row.goodsTypename }}</span>
+								</template>
+							</el-table-column>
+							<el-table-column label="创建时间" width="200" >
+								<template slot-scope="scope">
+									<el-popover trigger="hover" placement="top" >
+										<p>类型: {{ scope.row.goodsTypename }}</p>
+										<p>时间: {{ scope.row.goodsTypedate }}</p>
+										<div slot="reference" class="name-wrapper">
+											<el-tag size="medium"  row-dblclick="column">{{ scope.row.goodsTypedate }}</el-tag>
+										</div>
+									</el-popover>
+								</template>
+							</el-table-column>
+							<el-table-column label="操作" width="250">
+								<template slot-scope="scope">
+									<el-button size="mini" type="danger1"@click="Typesofchanges(scope.$index,scope.row.goodsTypeid)">修改</el-button>
+									<el-button size="mini" type="danger" @click="cancelomit(scope.row.goodsTypeid)">删除</el-button>
+									
+								</template>
+							</el-table-column>
+							
+						</el-table>
+					</template>
+
+				</el-aside>
+				<el-container>
+					<el-header>
+						<!--最上面-->
+
+						<el-row :gutter="20">
+							<el-col :span="5">
+								<div class="grid-content bg-purple">
+									<el-input placeholder="请输入商品名称"  v-model="productname" style="width: 250px;"></el-input>
+								</div>
+							</el-col>
+							<el-col :span="4">
+								<div class="grid-content bg-purple">
+									<el-button icon="el-icon-search" circle  @click="search2"></el-button>
+								</div>
+							</el-col>
+							<el-col :span="4">
+								<div class="grid-content bg-purple">
+									<el-button type="primary" @click="dengru" >新增类型</el-button>
+								</div>
+							</el-col>
+							<el-col :span="4">
+								<div class="grid-content bg-purple">
+									<el-button type="info"  @click="Thenewgoods">新增商品</el-button>
+								</div>
+							</el-col>
+						</el-row>
+
+					</el-header>
+					<el-main>
+						<!--中间-->
+
+						<template>
+							<el-table :data="tableData1" style="width: 100%" max-height="450">
+								<el-table-column fixed prop="firmnoid" label="厂商编号" width="80">
+								</el-table-column>
+								<el-table-column prop="shopweight" label="重量" width="120">
+								</el-table-column>
+								<el-table-column prop="shopprice" label="进货价" width="120">
+								</el-table-column>
+								<el-table-column prop="commodityname" label="品牌名称" width="120">
+								</el-table-column>
+								<el-table-column prop="firmnoname" label="厂商名称" width="120">
+								</el-table-column>
+								<el-table-column prop="shopbrand" label="商品名称" width="120">
+								</el-table-column>
+								<el-table-column fixed="right" label="操作" width="150">
+									<template slot-scope="scope">
+										
+										<el-button @click="Modifythegoods(scope.row.shopid)"  type="primary" icon="el-icon-edit" circle></el-button>
+
+										<el-button @click="cancelomit2(scope.row.shopid)" type="danger" icon="el-icon-delete" circle></el-button>
+									</template>
+								</el-table-column>
+							</el-table>
+						</template>
+
+					</el-main>
+					<el-footer style="margin-left: 400px;">
+						
+						<!--最下面-->
+						<el-pagination background layout="prev, pager, next" :total="1000">
+						</el-pagination>
+
+					</el-footer>
+				</el-container>
+			</el-container>
+			
+			<!--模态框-->
+			<el-dialog @opened="handlerOpen" :before-close="handleClose" :visible.sync="dialogVisible" title="当前页面模态框" width="100%" center>
+				<div id="cnt">
+
+				</div>
+				<span slot="footer" class="dialog-footer">
+	    						<el-button @click="dialogVisible=false">取 消</el-button>
+	    						<el-button type="primary">确 定</el-button>
+  							</span>
+			</el-dialog>
+			
+			
+			
+			<el-dialog @opened="handlerOpen1" :before-close="handleClose1" :visible.sync="dialogVisible1" title="当前页面模态框" width="100%" center>
+				<div id="cnt">
+
+				</div>
+				<span slot="footer" class="dialog-footer">
+	    			<el-button @click="dialogVisible1=false">取 消</el-button>
+	    			<el-button type="primary">确 定</el-button>
+  				</span>
+			</el-dialog>
+			
+			
+			<el-dialog @opened="handlerOpen2" :before-close="handleClose2" :visible.sync="dialogVisible2" title="当前页面模态框" width="100%" center>
+				<div id="cnt">
+
+				</div>
+				<span slot="footer" class="dialog-footer">
+	    			<el-button @click="dialogVisible1=false">取 消</el-button>
+	    			<el-button type="primary">确 定</el-button>
+  				</span>
+			</el-dialog>
+			
+			<el-dialog @opened="handlerOpen3" :before-close="handleClose3" :visible.sync="dialogVisible3" title="当前页面模态框" width="100%" center>
+				<div id="cnt">
+
+				</div>
+				<span slot="footer" class="dialog-footer">
+	    			<el-button @click="dialogVisible1=false">取 消</el-button>
+	    			<el-button type="primary">确 定</el-button>
+  				</span>
+			</el-dialog>
+			
+			
+		</div>
+
+	</body>
+	<script type="text/javascript" src="../../js/jquery-1.12.4.js"></script>
+	<script type="text/javascript" src="../../js/vue.js"></script>
+	<script type="text/javascript" src="../../js/axios.min.js"></script>
+	<script type="text/javascript" src="../../js/axios_cfg.js"></script>
+	<script type="text/javascript" src="../../js/index.js"></script>
+
+	<script>
+		var _this;
+		var app = new Vue({
+			el: "#app",
+			data: {
+				yy: "你好",
+				dialogVisible: false,
+				dialogVisible1: false,
+				dialogVisible2: false,
+				dialogVisible3: false,
+				tableData: [{goodsTypename:"",goodsTypedate:""}],
+				tableData1:[],
+				goodsTypename:null,
+				productname:null,
+				 loading: true
+
+			},
+			methods:{//方法的集合
+				//新增
+				dengru:function(){
+					_this.dialogVisible=true;
+					alert(1);		
+				},
+				//第一个模态框
+				handlerOpen() {
+					$("#cnt").load('dzw_commodityAdd.html');
+				},
+				//第二个模态框
+				handleClose(done) {
+					this.$confirm('是否退出?', '提示', {
+						confirmButtonText: '确定',
+						cancelButtonText: '取消',
+						type: 'warning'
+					}).then(() => {
+						done(); //关闭	
+					}).catch(() => {
+
+					});
+
+				},
+				//第一个模态框
+				handlerOpen1() {
+					$("#cnt").load('dzw_commoditychanges.html');
+				},
+				//第二个模态框
+				handleClose1(done) {
+					this.$confirm('是否退出?', '提示', {
+						confirmButtonText: '确定',
+						cancelButtonText: '取消',
+						type: 'warning'
+					}).then(() => {
+						done(); //关闭	
+					}).catch(() => {
+
+					});
+
+				},
+				//第三个模态框
+				handlerOpen2() {
+					$("#cnt").load('dzwcommoditThenewgoods.html');
+				},
+				//第三个模态框
+				handleClose2(done) {
+					this.$confirm('是否退出?', '提示', {
+						confirmButtonText: '确定',
+						cancelButtonText: '取消',
+						type: 'warning'
+					}).then(() => {
+						done(); //关闭	
+					}).catch(() => {
+
+					});
+
+				},
+				//第四个模态框
+				handlerOpen3() {
+					$("#cnt").load('dzw_commodityThenewgoods.html');
+				},
+				//第四个模态框
+				handleClose3(done) {
+					this.$confirm('是否退出?', '提示', {
+						confirmButtonText: '确定',
+						cancelButtonText: '取消',
+						type: 'warning'
+					}).then(() => {
+						done(); //关闭	
+					}).catch(() => {
+
+					});
+
+				},
+				//查询商品类型
+				Inquirecommoditytype:function(){
+					setTimeout(function() {
+					axios({
+						method: "get",
+						url: "http://127.0.0.1:8080/api/persons/lyw/Inquirecommoditytype",
+						
+					}).then(response => {
+						 var api = response.data
+						 if(api.code==200){
+						 		
+						 	_this.tableData =api.data;
+						 }
+					})
+					_this.loading = false;
+					}, 1500);
+					
+				},
+				//点击类型查询商品
+				dianji:function(i,id){
+					_this.loading = true;
+				setTimeout(function() {
+					
+					axios({
+						method: "get",
+						url: "http://127.0.0.1:8080/api/persons/lyw/chaxunshangpin/"+id,
+						
+					}).then(response => {
+						 	var api = response.data
+						 	if(api.code==200){
+						 		_this.tableData1 =api.data;	
+						 	}
+						
+					})
+					_this.loading = false;
+					}, 1500);
+				},
+				
+				/*进来查询商品*/
+				Inthequery:function(){
+						axios({
+						method: "get",
+						url: "http://127.0.0.1:8080/api/persons/lyw/Inthequery",
+					}).then(response => {
+						 	var api = response.data
+						 	if(api.code==200){
+						 		_this.tableData1 =api.data;
+						 		
+						 	}
+						
+					})
+				},
+				
+				//模态框修改
+				Typesofchanges:function(i,id){
+					alert(id);
+					_this.dialogVisible1=true;
+					 sessionStorage.setItem("zhutieid",id);
+				},
+				
+				//搜索类型
+				search:function(){
+					_this.loading = true;
+					setTimeout(function() {
+					
+					axios({
+						method: "get",
+						url: "http://127.0.0.1:8080/api/persons/lyw/search/"+_this.goodsTypename,
+						
+					}).then(response => {
+						
+						 	var api = response.data
+						 	
+						 	if(api.code==200){
+						 		
+						 		_this.tableData =api.data;
+						 	}
+						
+					})
+					_this.loading = false;
+					}, 1500);
+				},
+				//搜索商品
+				search2:function(){
+					_this.loading = true;
+					setTimeout(function() {
+					alert(_this.productname)
+					axios({
+						method: "get",
+						url: "http://127.0.0.1:8080/api/persons/lyw/Inthequery1/"+_this.productname,
+						
+					}).then(response => {
+						
+						 	var api = response.data
+						 	
+						 	if(api.code==200){
+						 		
+						 		_this.tableData1 =api.data;
+						 	}
+						
+					})
+					_this.loading = false;
+					}, 1500);
+				},
+				//删除类型
+				cancelomit:function(id){
+					_this.loading = true;
+					setTimeout(function() {
+							axios({
+								method: "get",
+								url: "http://127.0.0.1:8080/api/persons/lyw/delete/"+id,
+								
+							}).then(response => {
+								
+								 	var api = response.data
+								 	if(api.code==200){
+								 		_this.Inquirecommoditytype();
+								 	}
+								
+							})
+					_this.loading = false;
+					}, 1500);
+				},
+				//删除商品
+				cancelomit2:function(id){
+					_this.loading = true;
+					setTimeout(function() {
+					axios({
+						method: "get",
+						url: "http://127.0.0.1:8080/api/persons/lyw/data1/delete1/"+id,
+						
+					}).then(response => {
+						 	var api = response.data
+						 	if(api.code==200){
+						 		_this.Inquirecommoditytype();
+						 	}
+						
+					})
+					_this.loading = false;
+					}, 1500);
+				},
+				//修改商品
+				Modifythegoods:function(id){
+						alert(id);
+						_this.dialogVisible2=true;
+						sessionStorage.setItem("Modifythegoodsid",id);
+				},
+				//新增商品
+				Thenewgoods:function(){
+					_this.dialogVisible3=true;
+				}
+				
+		},
+		mounted() {
+			_this=this;
+			_this.Inquirecommoditytype();
+			_this.Inthequery();
+		}
+
+		});
+	</script>
+
+</html>

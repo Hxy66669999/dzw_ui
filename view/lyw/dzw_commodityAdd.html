@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<link rel="stylesheet" href="../../css/index.css" />
+	</head>
+
+	<body>
+		<div id="app2" style="margin-left: 800px;">
+
+			<el-form status-icon :rules="rules" ref="ruleForm" label-width="50px" class="demo-ruleForm" style="width: 500px;">
+				<el-form-item label="类型" prop="pass">
+					<el-input v-model="ruleForm.pass" style="width: 300px;"></el-input>
+				</el-form-item>
+				<el-form-item>
+					<el-button type="primary" @click="submitForm('ruleForm')">提交</el-button>
+					<el-button @click="resetForm('ruleForm')">重置</el-button>
+				</el-form-item>
+			</el-form>
+
+		</div>
+	</body>
+	<script type="text/javascript" src="../../js/jquery-1.12.4.js"></script>
+	<script type="text/javascript" src="../../js/vue.js"></script>
+	<script type="text/javascript" src="../../js/axios.min.js"></script>
+	<script type="text/javascript" src="../../js/axios_cfg.js"></script>
+	<script type="text/javascript" src="../../js/index.js"></script>
+	<script>
+		var validatePass = (rule, value, callback) => {
+			if(value === '') {
+				callback(new Error('请输入密码'));
+			} else {
+				
+				callback();
+			}
+		};
+		var _this;
+		var app = new Vue({
+			el: "#app2",
+			data: {
+				ruleForm: {
+					pass:''
+					},
+				
+				rules: {
+					pass: [{
+						validator: validatePass,
+						trigger: 'blur'
+					}],
+				},
+
+			},
+
+			methods: { //方法的集合
+				submitForm(formName) {
+					this.$refs[formName].validate((valid) => {
+						if(valid) {
+							alert('submit!');
+						} else {
+							console.log('error submit!!');
+							return false;
+						}
+					});
+					
+					
+					axios({
+						method: "get",
+						url: "http://127.0.0.1:8080/api/persons/lyw/Inquirecommoditytype/"+_this.ruleForm.pass,
+						
+					}).then(response => {
+						console.log(response)
+						 	var api = response.data
+						 	
+						 	if(api.code==200){
+						 		alert("nh")
+						 		_this.tableData =api.data;
+						 		console.log(_this.tableData)
+						 		location.href="../lyw/dzw_commodity.html"
+						 		
+						 	}
+						
+					})
+					
+				},
+				resetForm(formName) {
+					this.$refs[formName].resetFields();
+				},
+				
+				
+
+			},
+			mounted() {
+				_this = this;
+			}
+
+		});
+	</script>
+
+</html>
